@@ -44,19 +44,15 @@ getYear = year . date
 getYearAndMonth :: Expense -> YearAndMonth
 getYearAndMonth e = YearAndMonth (getYear e) (getMonth e)
 
-sameYearAndMonth e1 e2 = getYearAndMonth e1 == getYearAndMonth e2
-
 -- Do two expenses share a month? (And year, of course)
 sameMonth :: Expense -> Expense -> Bool
-sameMonth e1 e2 =
-  getMonth e1 == getMonth e2
-    && getYear e1 == getYear e2
+sameMonth e1 e2 = getYearAndMonth e1 == getYearAndMonth e2
 
--- Sort a list of expenses by Month
+-- Sort a list of expenses by (year and) month
 sortByMonth :: [Expense] -> [Expense]
 sortByMonth = sortBy compareMonth
   where
-    compareMonth e1 e2 = compare (getMonth e1) (getMonth e2)
+    compareMonth e1 e2 = compare (getYearAndMonth e1) (getYearAndMonth e2)
 
 -- Group all expenses from the same month into sublists
 groupExpenses :: [Expense] -> [[Expense]]
