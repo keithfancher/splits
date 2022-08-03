@@ -33,6 +33,7 @@ data MonthlyTotal = MonthlyTotal
   { yearAndMonth :: YearAndMonth,
     total :: Double
   }
+  deriving (Show)
 
 -- Convenience!
 getMonth :: Expense -> Int
@@ -66,6 +67,17 @@ combineExpenses :: Expense -> Expense -> Maybe (Int, Double)
 combineExpenses e1 e2
   | sameMonth e1 e2 = Just (getMonth e1, amount e1 + amount e2)
   | otherwise = Nothing
+
+-- Given an expense and a monthly total, add that expense in and return the new
+-- total. If they're not from the same month... Nothing.
+accumulateExpenses :: Expense -> MonthlyTotal -> Maybe MonthlyTotal
+accumulateExpenses exp tot =
+  if monthsMatch
+    then Just (MonthlyTotal (yearAndMonth tot) newTotal)
+    else Nothing
+  where
+    monthsMatch = getYearAndMonth exp == yearAndMonth tot
+    newTotal = total tot + amount exp
 
 reduceExpenses :: [Expense] -> [Maybe (Int, Double)]
 reduceExpenses [] = []
