@@ -7,6 +7,7 @@ module Lib where
 --   totalExpenses,
 -- )
 
+import Control.Monad (foldM)
 import Data.List (groupBy, sortBy)
 
 someFunc :: IO ()
@@ -55,23 +56,17 @@ sortByMonth = sortBy compareMonth
   where
     compareMonth e1 e2 = compare (getYearAndMonth e1) (getYearAndMonth e2)
 
--- Group all expenses from the same month into sublists
+-- Group all expenses from the same month into sublists. Note that this grouping
+-- requires them to be sorted, which is a handy for the output list as well.
 groupExpenses :: [Expense] -> [[Expense]]
 groupExpenses expenses = groupBy sameMonth sortedExpenses
   where
     sortedExpenses = sortByMonth expenses
 
--- If two Expenses share a month, return Just (Month, Total)
--- otherwise, return Nothing
-combineExpenses :: Expense -> Expense -> Maybe (Int, Double)
-combineExpenses e1 e2
-  | sameMonth e1 e2 = Just (getMonth e1, amount e1 + amount e2)
-  | otherwise = Nothing
-
 -- Given an expense and a monthly total, add that expense in and return the new
 -- total. If they're not from the same month... Nothing.
-accumulateExpenses :: Expense -> MonthlyTotal -> Maybe MonthlyTotal
-accumulateExpenses exp tot =
+addExpense :: MonthlyTotal -> Expense -> Maybe MonthlyTotal
+addExpense tot exp =
   if monthsMatch
     then Just (MonthlyTotal (yearAndMonth tot) newTotal)
     else Nothing
@@ -79,13 +74,11 @@ accumulateExpenses exp tot =
     monthsMatch = getYearAndMonth exp == yearAndMonth tot
     newTotal = total tot + amount exp
 
-reduceExpenses :: [Expense] -> [Maybe (Int, Double)]
-reduceExpenses [] = []
-reduceExpenses (x : xs) = [Nothing] -- fold ain't gonna work, types!
--- reduceExpenses (x:xs) = foldl combineExpenses x xs
-
--- Add up a list of Expenses, ignoring the dates
-totalExpenses :: [Expense] -> Double
-totalExpenses expenses = foldl (+) 0.0 amounts
+-- Add up a list of Expenses into a monthly total. If the expenses aren't all
+-- from the same month, return Nothing.
+accumulateExpenses :: [Expense] -> Maybe MonthlyTotal
+accumulateExpenses [] = Nothing
+accumulateExpenses (x : xs) = foldM addExpense (expToTotal x) xs
   where
-    amounts = map amount expenses
+    -- to get our starting fold value, just turn the expense into a total object
+    expToTotal exp = MonthlyTotal (getYearAndMonth exp) (amount exp)
