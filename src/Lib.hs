@@ -9,6 +9,7 @@ module Lib where
 
 import Control.Monad (foldM)
 import Data.List (groupBy, sortBy)
+import Data.Maybe (mapMaybe)
 
 someFunc :: IO ()
 someFunc = putStrLn "someFunc"
@@ -55,6 +56,17 @@ sortByMonth :: [Expense] -> [Expense]
 sortByMonth = sortBy compareMonth
   where
     compareMonth e1 e2 = compare (getYearAndMonth e1) (getYearAndMonth e2)
+
+-- Given a list of arbitrary expenses, group them by month and return a list of
+-- MonthlyTotals, in ascending order.
+--
+-- NOTE: Not 100% sure how I want to handle the Nothings... filtering out with
+-- mapMaybe for now. In theory, it can't fail based on input, only if my own
+-- logic has failed.
+processExpenses :: [Expense] -> [MonthlyTotal]
+processExpenses exps = mapMaybe accumulateExpenses grouped
+  where
+    grouped = groupExpenses exps
 
 -- Group all expenses from the same month into sublists. Note that this grouping
 -- requires them to be sorted, which is a handy for the output list as well.
