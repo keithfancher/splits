@@ -25,7 +25,7 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      Expense
   other-modules:
       Paths_splits
   hs-source-dirs:
