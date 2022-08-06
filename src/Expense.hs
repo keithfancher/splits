@@ -35,7 +35,7 @@ data MonthlyTotal = MonthlyTotal
   { yearAndMonth :: YearAndMonth,
     total :: Double
   }
-  deriving (Show)
+  deriving (Show, Eq)
 
 -- Convenience!
 getMonth :: Expense -> Int
