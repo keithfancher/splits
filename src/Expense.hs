@@ -78,13 +78,13 @@ groupExpenses expenses = groupBy sameMonth sortedExpenses
 -- Given an expense and a monthly total, add that expense in and return the new
 -- total. If they're not from the same month... Nothing.
 addExpense :: MonthlyTotal -> Expense -> Maybe MonthlyTotal
-addExpense tot exp =
+addExpense t e =
   if monthsMatch
-    then Just (MonthlyTotal (yearAndMonth tot) newTotal)
+    then Just (MonthlyTotal (yearAndMonth t) newTotal)
     else Nothing
   where
-    monthsMatch = getYearAndMonth exp == yearAndMonth tot
-    newTotal = total tot + amount exp
+    monthsMatch = getYearAndMonth e == yearAndMonth t
+    newTotal = total t + amount e
 
 -- Add up a list of Expenses into a monthly total. If the expenses aren't all
 -- from the same month, return Nothing.
@@ -93,4 +93,4 @@ accumulateExpenses [] = Nothing
 accumulateExpenses (x : xs) = foldM addExpense (expToTotal x) xs
   where
     -- to get our starting fold value, just turn the expense into a total object
-    expToTotal exp = MonthlyTotal (getYearAndMonth exp) (amount exp)
+    expToTotal e = MonthlyTotal (getYearAndMonth e) (amount e)
