@@ -51,6 +51,14 @@ getYearAndMonth e = YearAndMonth (getYear e) (getMonth e)
 sameMonth :: Expense -> Expense -> Bool
 sameMonth e1 e2 = getYearAndMonth e1 == getYearAndMonth e2
 
+-- Given a year and month, return the following month. Accounts for the year
+-- ending, etc. Note that we still aren't checking for wacky values here.
+incrementMonth :: YearAndMonth -> YearAndMonth
+incrementMonth (YearAndMonth year month) =
+  if month == 12
+    then YearAndMonth (year + 1) 1
+    else YearAndMonth year (month + 1)
+
 -- Sort a list of expenses by (year and) month
 sortByMonth :: [Expense] -> [Expense]
 sortByMonth = sortBy compareMonth
