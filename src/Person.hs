@@ -11,7 +11,7 @@ data Person = Person
 
 -- Summary for the shared expense for a single month
 data MonthlyDebtSummary = MonthlyDebtSummary
-  { yearAndMonth :: YearAndMonth,
+  { --yearAndMonth :: YearAndMonth, -- TODO: rename, this clashes (or look into lang ext?)
     ower :: Person, -- The one who owes money
     owee :: Person, -- The one who is owed money
     totalPaid :: Double, -- The total paid b/w all parties
@@ -21,6 +21,17 @@ data MonthlyDebtSummary = MonthlyDebtSummary
 
 summarizeDebt :: Person -> Person -> [MonthlyDebtSummary]
 summarizeDebt p1 p2 = []
+
+-- Given two Persons and their list of expenses, calculate the lower and upper
+-- bound of the months. Used to normalize the expense lists.
+-- TODO: verify sorted, or sort? Probably best to ensure sorted initially
+minAndMaxMonths :: Person -> Person -> (YearAndMonth, YearAndMonth)
+minAndMaxMonths p1 p2 = (lowYearAndMonth, highYearAndMonth)
+  where
+    lowYearAndMonth = min (head p1dates) (head p2dates)
+    highYearAndMonth = max (last p1dates) (last p2dates)
+    p1dates = map yearAndMonth (expenseSummary p1)
+    p2dates = map yearAndMonth (expenseSummary p2)
 
 -- Given a low month and a high month, fill in all the "blanks" of a list of
 -- monthly expenses, so the list is contiguous from beginning to end. Any
