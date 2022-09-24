@@ -23,8 +23,8 @@ summarizeDebt p1 p2 = []
 
 -- Given two monthly totals, one for each person, calculate that month's
 -- summary. Who owes whom and how much.
-generateSummary :: MonthlyTotal -> MonthlyTotal -> MonthlyDebtSummary
-generateSummary t1 t2 =
+singleMonthSummary :: MonthlyTotal -> MonthlyTotal -> MonthlyDebtSummary
+singleMonthSummary t1 t2 =
   MonthlyDebtSummary
     (yearAndMonth t1) -- TODO: verify both same month
     (outcome p1total p2total)
