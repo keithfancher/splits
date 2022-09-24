@@ -10,6 +10,12 @@ spec = do
     it "returns an empty list given two people with no debt" $ do
       summarizeDebt [] [] `shouldBe` []
 
+    it "summarizes a mixture of debts for two people" $ do
+      summarizeDebt someTotals otherTotals `shouldBe` expectedSummaries
+
+    it "summarizes a one-sided debt for two people, only one person paid" $ do
+      summarizeDebt someTotals [] `shouldBe` oneSidedSummaries
+
   describe "singleMonthSummary" $ do
     it "figures out how much person1 owes person2" $ do
       singleMonthSummary
@@ -31,21 +37,46 @@ spec = do
 
   describe "normalizeTotals" $ do
     it "returns zeroed out list given empty totals" $ do
-      normalizeTotals begin end [] `shouldBe` expectedEmptyTotals
+      normalizeTotals (YearAndMonth 2022 09) (YearAndMonth 2023 04) []
+        `shouldBe` expectedEmptyTotals
 
     it "returns a zero-padded list with proper endpoints given non-empty totals" $ do
-      normalizeTotals begin end someTotals `shouldBe` expectedNormalizedTotals
+      normalizeTotals (YearAndMonth 2022 09) (YearAndMonth 2023 04) someTotals
+        `shouldBe` expectedNormalizedTotals
 
 -- TODO: test for (and handle) bad input, e.g. starting month AFTER end month
-
-begin = YearAndMonth 2022 09
-
-end = YearAndMonth 2023 04
 
 someTotals =
   [ MonthlyTotal (YearAndMonth 2022 11) 42,
     MonthlyTotal (YearAndMonth 2023 02) 666,
     MonthlyTotal (YearAndMonth 2023 03) 965.21
+  ]
+
+otherTotals =
+  [ MonthlyTotal (YearAndMonth 2022 11) 50,
+    MonthlyTotal (YearAndMonth 2023 02) 700,
+    MonthlyTotal (YearAndMonth 2023 03) 400,
+    MonthlyTotal (YearAndMonth 2023 05) 250
+  ]
+
+-- someTotals + otherTotals:
+expectedSummaries =
+  [ MonthlyDebtSummary (YearAndMonth 2022 11) P1OwesP2 92 4,
+    MonthlyDebtSummary (YearAndMonth 2022 12) ExpensesEqual 0 0,
+    MonthlyDebtSummary (YearAndMonth 2023 1) ExpensesEqual 0 0,
+    MonthlyDebtSummary (YearAndMonth 2023 2) P1OwesP2 1366 17,
+    MonthlyDebtSummary (YearAndMonth 2023 3) P2OwesP1 1365.21 282.605,
+    MonthlyDebtSummary (YearAndMonth 2023 4) ExpensesEqual 0 0,
+    MonthlyDebtSummary (YearAndMonth 2023 5) P1OwesP2 250 125
+  ]
+
+-- someTotals + []
+oneSidedSummaries =
+  [ MonthlyDebtSummary (YearAndMonth 2022 11) P2OwesP1 42 21,
+    MonthlyDebtSummary (YearAndMonth 2022 12) ExpensesEqual 0 0,
+    MonthlyDebtSummary (YearAndMonth 2023 1) ExpensesEqual 0 0,
+    MonthlyDebtSummary (YearAndMonth 2023 02) P2OwesP1 666 333,
+    MonthlyDebtSummary (YearAndMonth 2023 03) P2OwesP1 965.21 482.605
   ]
 
 expectedNormalizedTotals =

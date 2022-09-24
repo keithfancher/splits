@@ -19,7 +19,14 @@ data DebtOutcome = P1OwesP2 | P2OwesP1 | ExpensesEqual
 -- The main thing. Given a list of monthly totals, one for each person,
 -- summarizes the debts owed between the two people for that time span.
 summarizeDebt :: [MonthlyTotal] -> [MonthlyTotal] -> [MonthlyDebtSummary]
-summarizeDebt p1 p2 = []
+summarizeDebt [] [] = [] -- both empty, nothing to do
+summarizeDebt p1totals p2totals = map summarizeMonth zippedTotals
+  where
+    (lowerBound, upperBound) = minAndMaxMonths p1totals p2totals
+    p1normalized = normalizeTotals lowerBound upperBound p1totals
+    p2normalized = normalizeTotals lowerBound upperBound p2totals
+    zippedTotals = zip p1normalized p2normalized
+    summarizeMonth (t1, t2) = singleMonthSummary t1 t2
 
 -- Given two monthly totals, one for each person, calculate that month's
 -- summary. Who owes whom and how much.
@@ -42,9 +49,12 @@ singleMonthSummary t1 t2 =
       | otherwise = ExpensesEqual
 
 -- Given two list of expenses, calculate the lower and upper bound of the
--- months. Used to normalize the expense lists.
+-- months. Used to normalize the expense lists. Note that it doesn't make sense
+-- to call this with two empty lists -- result is undefined.
 -- TODO: verify sorted, or sort? Probably best to ensure sorted initially
 minAndMaxMonths :: [MonthlyTotal] -> [MonthlyTotal] -> (YearAndMonth, YearAndMonth)
+minAndMaxMonths p1totals [] = (yearAndMonth (head p1totals), yearAndMonth (last p1totals))
+minAndMaxMonths [] p2totals = (yearAndMonth (head p2totals), yearAndMonth (last p2totals))
 minAndMaxMonths p1totals p2totals = (lowYearAndMonth, highYearAndMonth)
   where
     lowYearAndMonth = min (head p1dates) (head p2dates)
