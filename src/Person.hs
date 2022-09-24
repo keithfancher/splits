@@ -3,12 +3,6 @@ module Person where
 import qualified Data.Map as Map
 import Expense (MonthlyTotal (..), YearAndMonth, incrementMonth)
 
-data Person = Person
-  { name :: String, -- TODO: text? Not important, just to differentiate
-    expenseSummary :: [MonthlyTotal]
-  }
-  deriving (Show, Eq)
-
 -- Summary for the shared expense for a single month
 data MonthlyDebtSummary = MonthlyDebtSummary
   { month :: YearAndMonth,
@@ -22,14 +16,20 @@ data MonthlyDebtSummary = MonthlyDebtSummary
 data DebtOutcome = P1OwesP2 | P2OwesP1 | ExpensesEqual
   deriving (Show, Eq)
 
-summarizeDebt :: Person -> Person -> [MonthlyDebtSummary]
+-- The main thing. Given a list of monthly totals, one for each person,
+-- summarizes the debts owed between the two people for that time span.
+summarizeDebt :: [MonthlyTotal] -> [MonthlyTotal] -> [MonthlyDebtSummary]
 summarizeDebt p1 p2 = []
 
 -- Given two monthly totals, one for each person, calculate that month's
 -- summary. Who owes whom and how much.
--- TODO: check for same month/year... return Maybe? error out?
 generateSummary :: MonthlyTotal -> MonthlyTotal -> MonthlyDebtSummary
-generateSummary t1 t2 = MonthlyDebtSummary (yearAndMonth t1) (outcome p1total p2total) combinedTotal amountOwed
+generateSummary t1 t2 =
+  MonthlyDebtSummary
+    (yearAndMonth t1) -- TODO: verify both same month
+    (outcome p1total p2total)
+    combinedTotal
+    amountOwed
   where
     p1total = total t1
     p2total = total t2
@@ -41,16 +41,16 @@ generateSummary t1 t2 = MonthlyDebtSummary (yearAndMonth t1) (outcome p1total p2
       | p1t > p2t = P2OwesP1
       | otherwise = ExpensesEqual
 
--- Given two Persons and their list of expenses, calculate the lower and upper
--- bound of the months. Used to normalize the expense lists.
+-- Given two list of expenses, calculate the lower and upper bound of the
+-- months. Used to normalize the expense lists.
 -- TODO: verify sorted, or sort? Probably best to ensure sorted initially
-minAndMaxMonths :: Person -> Person -> (YearAndMonth, YearAndMonth)
-minAndMaxMonths p1 p2 = (lowYearAndMonth, highYearAndMonth)
+minAndMaxMonths :: [MonthlyTotal] -> [MonthlyTotal] -> (YearAndMonth, YearAndMonth)
+minAndMaxMonths p1totals p2totals = (lowYearAndMonth, highYearAndMonth)
   where
     lowYearAndMonth = min (head p1dates) (head p2dates)
     highYearAndMonth = max (last p1dates) (last p2dates)
-    p1dates = map yearAndMonth (expenseSummary p1)
-    p2dates = map yearAndMonth (expenseSummary p2)
+    p1dates = map yearAndMonth p1totals
+    p2dates = map yearAndMonth p2totals
 
 -- Given a low month and a high month, fill in all the "blanks" of a list of
 -- monthly expenses, so the list is contiguous from beginning to end. Any

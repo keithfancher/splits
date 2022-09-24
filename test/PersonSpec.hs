@@ -7,8 +7,8 @@ import Test.Hspec
 spec :: Spec
 spec = do
   describe "summarizeDebt" $ do
-    it "returns an empty list given Persons with no debt" $ do
-      summarizeDebt (Person "Alice" []) (Person "Bob" []) `shouldBe` []
+    it "returns an empty list given two people with no debt" $ do
+      summarizeDebt [] [] `shouldBe` []
 
   describe "normalizeTotals" $ do
     it "returns zeroed out list given empty totals" $ do
@@ -17,7 +17,7 @@ spec = do
     it "returns a zero-padded list with proper endpoints given non-empty totals" $ do
       normalizeTotals begin end someTotals `shouldBe` expectedNormalizedTotals
 
-    -- TODO: test for (and handle) bad input, e.g. starting month AFTER end month
+-- TODO: test for (and handle) bad input, e.g. starting month AFTER end month
 
 begin = YearAndMonth 2022 09
 
