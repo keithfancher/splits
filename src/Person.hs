@@ -11,16 +11,35 @@ data Person = Person
 
 -- Summary for the shared expense for a single month
 data MonthlyDebtSummary = MonthlyDebtSummary
-  { --yearAndMonth :: YearAndMonth, -- TODO: rename, this clashes (or look into lang ext?)
-    ower :: Person, -- The one who owes money
-    owee :: Person, -- The one who is owed money
+  { month :: YearAndMonth,
+    outcome :: DebtOutcome,
     totalPaid :: Double, -- The total paid b/w all parties
     amountOwed :: Double -- The amount the ower owes the owee :'(
   }
   deriving (Show, Eq)
 
+-- The three possible scenarios for a given month
+data DebtOutcome = P1OwesP2 | P2OwesP1 | ExpensesEqual
+  deriving (Show, Eq)
+
 summarizeDebt :: Person -> Person -> [MonthlyDebtSummary]
 summarizeDebt p1 p2 = []
+
+-- Given two monthly totals, one for each person, calculate that month's
+-- summary. Who owes whom and how much.
+-- TODO: check for same month/year... return Maybe? error out?
+generateSummary :: MonthlyTotal -> MonthlyTotal -> MonthlyDebtSummary
+generateSummary t1 t2 = MonthlyDebtSummary (yearAndMonth t1) (outcome p1total p2total) combinedTotal amountOwed
+  where
+    p1total = total t1
+    p2total = total t2
+    combinedTotal = p1total + p2total
+    -- For whoever paid less, the diff between half and the amount they paid:
+    amountOwed = (combinedTotal / 2) - min p1total p2total
+    outcome p1t p2t
+      | p1t < p2t = P1OwesP2
+      | p1t > p2t = P2OwesP1
+      | otherwise = ExpensesEqual
 
 -- Given two Persons and their list of expenses, calculate the lower and upper
 -- bound of the months. Used to normalize the expense lists.
