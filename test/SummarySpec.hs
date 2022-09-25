@@ -1,7 +1,7 @@
-module PersonSpec (spec) where
+module SummarySpec (spec) where
 
 import Expense (MonthlyTotal (..), YearAndMonth (..))
-import Person
+import Summary
 import Test.Hspec
 
 spec :: Spec

@@ -1,4 +1,5 @@
-module Person where
+module Summary where
+-- TODO: explicit exports, now that the API is basically settled
 
 import qualified Data.Map as Map
 import Expense (MonthlyTotal (..), YearAndMonth, incrementMonth)
@@ -51,6 +52,7 @@ singleMonthSummary t1 t2 =
 -- Given two list of expenses, calculate the lower and upper bound of the
 -- months. Used to normalize the expense lists. Note that it doesn't make sense
 -- to call this with two empty lists -- result is undefined.
+-- TODO: handle case of two empty lists... use an Either? explicitly return an error?
 -- TODO: verify sorted, or sort? Probably best to ensure sorted initially
 minAndMaxMonths :: [MonthlyTotal] -> [MonthlyTotal] -> (YearAndMonth, YearAndMonth)
 minAndMaxMonths p1totals [] = (yearAndMonth (head p1totals), yearAndMonth (last p1totals))

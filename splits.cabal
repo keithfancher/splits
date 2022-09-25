@@ -26,7 +26,7 @@ source-repository head
 library
   exposed-modules:
       Expense
-      Person
+      Summary
   other-modules:
       Paths_splits
   hs-source-dirs:
@@ -54,7 +54,7 @@ test-suite splits-test
   main-is: Spec.hs
   other-modules:
       ExpenseSpec
-      PersonSpec
+      SummarySpec
       Paths_splits
   hs-source-dirs:
       test
