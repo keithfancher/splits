@@ -27,6 +27,7 @@ library
   exposed-modules:
       Expense
       Parse
+      Process
       Summary
   other-modules:
       Paths_splits
@@ -62,6 +63,7 @@ test-suite splits-test
   other-modules:
       ExpenseSpec
       ParseSpec
+      ProcessSpec
       SummarySpec
       Paths_splits
   hs-source-dirs:
