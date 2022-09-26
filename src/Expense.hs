@@ -29,6 +29,10 @@ data YearAndMonth = YearAndMonth Int Int
 
 data Expense = Expense
   { date :: Date,
+    -- Note that `amount` can be positive or negative. There's no way for us to
+    -- know whether a dataset uses negatives to represent credits or debits. It
+    -- shouldn't matter! As long as they're internally consistent, it'll even
+    -- out as we add them up.
     amount :: Double
   }
   deriving (Show, Eq)

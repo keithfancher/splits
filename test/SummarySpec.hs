@@ -35,6 +35,15 @@ spec = do
         (MonthlyTotal (YearAndMonth 2022 04) 1100)
         `shouldBe` MonthlyDebtSummary (YearAndMonth 2022 04) ExpensesEqual 2200 0
 
+    -- This is a tricky one. Some datasets use negatives to represent expenses,
+    -- some use positives. We need to make sure the "who owes whom" logic works
+    -- in either case. We use positive numbers for our totals internally.
+    it "compares correctly when expenses are represented as negative numbers" $ do
+      singleMonthSummary
+        (MonthlyTotal (YearAndMonth 2022 04) (-1300))
+        (MonthlyTotal (YearAndMonth 2022 04) (-1100))
+        `shouldBe` MonthlyDebtSummary (YearAndMonth 2022 04) P2OwesP1 2400 100
+
   describe "normalizeTotals" $ do
     it "returns zeroed out list given empty totals" $ do
       normalizeTotals (YearAndMonth 2022 09) (YearAndMonth 2023 04) []

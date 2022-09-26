@@ -10,7 +10,10 @@ where
 import qualified Data.Map as Map
 import Expense (MonthlyTotal (..), YearAndMonth, incrementMonth)
 
--- Summary for the shared expense for a single month
+-- Summary for the shared expense for a single month. Note that the amounts
+-- here will (should) always be positive. e.g. `totalPaid: 300`, `amountOwed:
+-- 34` means exactly what it sounds like, regardless of how debits/credits were
+-- represented in the incoming data.
 data MonthlyDebtSummary = MonthlyDebtSummary
   { month :: YearAndMonth,
     outcome :: DebtOutcome,
@@ -37,16 +40,26 @@ summarizeDebt p1totals p2totals = map summarizeMonth zippedTotals
 
 -- Given two monthly totals, one for each person, calculate that month's
 -- summary. Who owes whom and how much.
+--
+-- TODO: If two monthly totals have different signs, throw an error. There's no
+-- way for us to know which number is greater, because we can't know whether
+-- the dataset uses positives or negatives for debits/credits. Perhaps a config
+-- option to get around this?
 singleMonthSummary :: MonthlyTotal -> MonthlyTotal -> MonthlyDebtSummary
 singleMonthSummary t1 t2 =
   MonthlyDebtSummary
-    (yearAndMonth t1) -- TODO: verify both same month
+    (yearAndMonth t1) -- TODO: verify both same month, or error?
     (outcome p1total p2total)
     combinedTotal
     amountOwed
   where
-    p1total = total t1
-    p2total = total t2
+    -- Note the call to `abs`. Need to normalize here so we can consistently
+    -- decide who owes whom, regardless of whether credits or debits are
+    -- represented as positive or negative numbers. (For example, if the two
+    -- totals are -100 and -200, the latter paid "more" that month even though
+    -- it's the smaller number.)
+    p1total = abs $ total t1
+    p2total = abs $ total t2
     combinedTotal = p1total + p2total
     -- For whoever paid less, the diff between half and the amount they paid:
     amountOwed = (combinedTotal / 2) - min p1total p2total
