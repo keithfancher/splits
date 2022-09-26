@@ -1,5 +1,11 @@
-module Summary where
--- TODO: explicit exports, now that the API is basically settled
+module Summary
+  ( DebtOutcome (..),
+    MonthlyDebtSummary (..),
+    normalizeTotals,
+    singleMonthSummary,
+    summarizeDebt,
+  )
+where
 
 import qualified Data.Map as Map
 import Expense (MonthlyTotal (..), YearAndMonth, incrementMonth)
@@ -84,6 +90,7 @@ totalsToMap totals = Map.fromList (map toTuple totals)
 
 -- Generate a "stub" of monthly totals, all zeroed, from the beginning month to
 -- ending month specified (inclusive).
+-- TODO: just make this work even if args are reversed, avoid the need for error checking altogether
 generateStubTotals :: YearAndMonth -> YearAndMonth -> [MonthlyTotal]
 generateStubTotals minMonth maxMonth = map totalFromTup totals
   where

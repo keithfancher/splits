@@ -44,8 +44,6 @@ spec = do
       normalizeTotals (YearAndMonth 2022 09) (YearAndMonth 2023 04) someTotals
         `shouldBe` expectedNormalizedTotals
 
--- TODO: test for (and handle) bad input, e.g. starting month AFTER end month
-
 someTotals =
   [ MonthlyTotal (YearAndMonth 2022 11) 42,
     MonthlyTotal (YearAndMonth 2023 02) 666,
