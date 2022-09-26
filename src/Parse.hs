@@ -1,4 +1,4 @@
-module Parse where
+module Parse (parse, parseLine) where
 
 import qualified Data.Text as T
 import Expense (Date (..), Expense (Expense))
