@@ -1,11 +1,13 @@
-module Expense where
-
--- ( someFunc,
---   Date,
---   Expense,
---   MonthlyTotal,
---   totalExpenses,
--- )
+module Expense
+  ( Date (..),
+    Expense (..),
+    incrementMonth,
+    MonthlyTotal (..),
+    processExpenses,
+    someFunc,
+    YearAndMonth (..),
+  )
+where
 
 import Control.Monad (foldM)
 import Data.List (groupBy, sortBy)
