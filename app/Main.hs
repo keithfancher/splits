@@ -1,6 +1,8 @@
 module Main where
 
-import Expense
+import Process (processFiles)
 
 main :: IO ()
-main = someFunc
+main = do
+  debtSummary <- processFiles "" ""
+  putStrLn "Nothin' yet"

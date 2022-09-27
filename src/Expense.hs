@@ -4,7 +4,6 @@ module Expense
     incrementMonth,
     MonthlyTotal (..),
     processExpenses,
-    someFunc,
     YearAndMonth (..),
   )
 where
@@ -12,9 +11,6 @@ where
 import Control.Monad (foldM)
 import Data.List (groupBy, sortBy)
 import Data.Maybe (mapMaybe)
-
-someFunc :: IO ()
-someFunc = putStrLn "someFunc"
 
 data Date = Date
   { year :: Int,
