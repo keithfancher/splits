@@ -1,25 +1,40 @@
-module Parse (parse, parseLine) where
+module Parse
+  ( parse,
+    parseLine,
+    ParseConf (..),
+  )
+where
 
 import qualified Data.Text as T
-import Expense (Date (..), Expense (Expense))
+import Expense (Date (..), Expense (..))
+
+data ParseConf = ParseConf
+  { -- Character(s) that separate the columns in the CSV:
+    colSep :: T.Text,
+    -- Zero-indexed column number of the date of expense
+    dateColNum :: Int,
+    -- Zero-indexed column number of the amount of expense
+    amountColNum :: Int,
+    -- Zero-indexed row number of the beginning of the data (i.e. if there's a
+    -- header row at `0`, this value might be `1`)
+    dataStartRow :: Int -- TODO: Not using this yet!
+  }
 
 -- Given a CSV (as Text), parse it out into a list of `Expense` objects. We'll
--- also need to know the separator character(s) as well as the (zero-indexed)
--- column numbers for the data we want (date and amount). We can ignore the
--- other columns.
-parse :: T.Text -> T.Text -> Int -> Int -> [Expense]
-parse expensesCsv sep dateColNum amountColNum = map parseWithArgs (T.lines expensesCsv)
+-- need some config data to know exactly how to parse out the data we need.
+parse :: ParseConf -> T.Text -> [Expense]
+parse conf expensesCsv = map parseWithConf (T.lines expensesCsv)
   where
-    parseWithArgs = parseLine sep dateColNum amountColNum -- partial application magic!
+    parseWithConf = parseLine conf -- partial application magic!
 
 --  One row from the CSV. Parse out a single `Expense` object.
-parseLine :: T.Text -> Int -> Int -> T.Text -> Expense
-parseLine sep dateColNum amountColNum csvLine = Expense date amount
+parseLine :: ParseConf -> T.Text -> Expense
+parseLine conf csvLine = Expense date amount
   where
-    splitText = T.splitOn sep csvLine
-    amountText = splitText !! amountColNum
-    date = parseDate (splitText !! dateColNum)
-    amount = read (T.unpack amountText) :: Double -- TODO: Something like this? Is there a better way?
+    splitText = T.splitOn (colSep conf) csvLine
+    amountText = splitText !! amountColNum conf
+    date = parseDate (splitText !! dateColNum conf)
+    amount = read (T.unpack amountText) :: Double -- TODO: Is there a better way?
 
 -- TODO: This is extremely specific to my own data right now, with basically no
 -- room for error. Probably use a library to do this more flexibly.

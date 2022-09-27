@@ -8,16 +8,22 @@ spec :: Spec
 spec = do
   describe "parse" $ do
     it "returns an empty list given an empty string" $ do
-      parse "" sep 0 0 `shouldBe` []
+      parse testConf "" `shouldBe` []
 
     it "parses a correctly-formed CSV" $ do
-      parse simpleCsv sep 0 2 `shouldBe` simpleResult
+      parse testConf simpleCsv `shouldBe` simpleResult
 
   describe "parseLine" $ do
     it "parses a correctly-formed CSV line" $ do
-      parseLine sep 0 2 simpleCsvLine `shouldBe` simpleLineResult
+      parseLine testConf simpleCsvLine `shouldBe` simpleLineResult
 
-sep = ";"
+testConf =
+  ParseConf
+    { colSep = ";",
+      dateColNum = 0,
+      amountColNum = 2,
+      dataStartRow = 1
+    }
 
 simpleCsv = "08/06/2022;BIG BURGERZ;-50.34\n08/31/2022;BIG BURGERZ;-93.21\n01/23/2023;STUFFZ;300"
 
