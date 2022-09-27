@@ -29,5 +29,5 @@ defaultConfig =
     { colSep = ";",
       dateColNum = 0,
       amountColNum = 2,
-      dataStartRow = 1
+      dataStartRow = 0
     }

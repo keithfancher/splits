@@ -8,24 +8,38 @@ spec :: Spec
 spec = do
   describe "parse" $ do
     it "returns an empty list given an empty string" $ do
-      parse testConf "" `shouldBe` []
+      parse simpleConf "" `shouldBe` []
 
     it "parses a correctly-formed CSV" $ do
-      parse testConf simpleCsv `shouldBe` simpleResult
+      parse simpleConf simpleCsv `shouldBe` simpleResult
+
+    it "parses a correctly-formed CSV that includes a header" $ do
+      parse headerConf csvWithHeader `shouldBe` simpleResult
 
   describe "parseLine" $ do
     it "parses a correctly-formed CSV line" $ do
-      parseLine testConf simpleCsvLine `shouldBe` simpleLineResult
+      parseLine simpleConf simpleCsvLine `shouldBe` simpleLineResult
 
-testConf =
+simpleConf =
   ParseConf
     { colSep = ";",
       dateColNum = 0,
       amountColNum = 2,
-      dataStartRow = 1
+      dataStartRow = 0 -- data starts immediately
+    }
+
+headerConf =
+  ParseConf
+    { colSep = ";",
+      dateColNum = 0,
+      amountColNum = 2,
+      dataStartRow = 1 -- there's a header with col names before the data
     }
 
 simpleCsv = "08/06/2022;BIG BURGERZ;-50.34\n08/31/2022;BIG BURGERZ;-93.21\n01/23/2023;STUFFZ;300"
+
+-- Same as above, but with a header row
+csvWithHeader = "DATE;DESCRIPTION;AMOUNT\n08/06/2022;BIG BURGERZ;-50.34\n08/31/2022;BIG BURGERZ;-93.21\n01/23/2023;STUFFZ;300"
 
 simpleResult =
   [ Expense (Date 2022 08 06) (-50.34),

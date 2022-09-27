@@ -17,15 +17,16 @@ data ParseConf = ParseConf
     amountColNum :: Int,
     -- Zero-indexed row number of the beginning of the data (i.e. if there's a
     -- header row at `0`, this value might be `1`)
-    dataStartRow :: Int -- TODO: Not using this yet!
+    dataStartRow :: Int
   }
 
 -- Given a CSV (as Text), parse it out into a list of `Expense` objects. We'll
 -- need some config data to know exactly how to parse out the data we need.
 parse :: ParseConf -> T.Text -> [Expense]
-parse conf expensesCsv = map parseWithConf (T.lines expensesCsv)
+parse conf expensesCsv = map parseWithConf linesWithoutHeader
   where
     parseWithConf = parseLine conf -- partial application magic!
+    linesWithoutHeader = drop (dataStartRow conf) (T.lines expensesCsv)
 
 --  One row from the CSV. Parse out a single `Expense` object.
 parseLine :: ParseConf -> T.Text -> Expense
