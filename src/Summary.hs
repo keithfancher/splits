@@ -20,7 +20,21 @@ data MonthlyDebtSummary = MonthlyDebtSummary
     totalPaid :: Double, -- The total paid b/w all parties
     amountOwed :: Double -- The amount the ower owes the owee :'(
   }
-  deriving (Show, Eq)
+  deriving (Eq)
+
+instance Show MonthlyDebtSummary where
+  show sum =
+    mconcat
+      [ "Date: ",
+        show $ month sum,
+        "\tTotal Paid: ",
+        show $ totalPaid sum,
+        "\tResult: ",
+        show $ outcome sum,
+        ", $",
+        show $ amountOwed sum,
+        " owed\n"
+      ]
 
 -- The three possible scenarios for a given month
 data DebtOutcome = P1OwesP2 | P2OwesP1 | ExpensesEqual

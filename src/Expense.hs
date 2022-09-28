@@ -21,7 +21,10 @@ data Date = Date
 
 -- A date with only year and month ... combine with above type? Replace?
 data YearAndMonth = YearAndMonth Int Int
-  deriving (Show, Eq, Ord)
+  deriving (Eq, Ord)
+
+instance Show YearAndMonth where
+  show (YearAndMonth y m) = mconcat [show y, "/", show m]
 
 data Expense = Expense
   { date :: Date,
