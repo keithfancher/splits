@@ -115,7 +115,6 @@ bigCsvData2 =
   \11/08/2021,11/08/2021,BILL'S FOOD BARN,Food & Drink,Sale,-9.99,\n\
   \11/07/2021,11/08/2021,BILL'S FOOD BARN,Food & Drink,Sale,-65.15,\n"
 
--- TODO: round off before returning summary! 2 decimals
 bigSummaries =
   [ MonthlyDebtSummary (YearAndMonth 2021 10) P2OwesP1 90.23 45.115,
     MonthlyDebtSummary (YearAndMonth 2021 11) P1OwesP2 1168.29 7.264999999999986,

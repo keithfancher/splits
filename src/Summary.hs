@@ -9,6 +9,7 @@ where
 
 import qualified Data.Map as Map
 import Expense (MonthlyTotal (..), YearAndMonth, incrementMonth)
+import Text.Printf (printf)
 
 -- Summary for the shared expense for a single month. Note that the amounts
 -- here will (should) always be positive. e.g. `totalPaid: 300`, `amountOwed:
@@ -23,18 +24,24 @@ data MonthlyDebtSummary = MonthlyDebtSummary
   deriving (Eq)
 
 instance Show MonthlyDebtSummary where
-  show sum =
+  show summary =
     mconcat
       [ "Date: ",
-        show $ month sum,
-        "\tTotal Paid: ",
-        show $ totalPaid sum,
+        show $ month summary,
+        "\tTotal Paid: $",
+        showRounded $ totalPaid summary,
         "\tResult: ",
-        show $ outcome sum,
+        show $ outcome summary,
         ", $",
-        show $ amountOwed sum,
+        showRounded $ amountOwed summary,
         " owed\n"
       ]
+
+-- Don't actually round the values when computing, but round to two decimal
+-- places when showing as a String.
+-- TODO: Or should we round the data itself? Depends how it'll be used...
+showRounded :: Double -> String
+showRounded = printf "%.2f"
 
 -- The three possible scenarios for a given month
 data DebtOutcome = P1OwesP2 | P2OwesP1 | ExpensesEqual
