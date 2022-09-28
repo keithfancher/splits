@@ -2,6 +2,7 @@ module Summary
   ( DebtOutcome (..),
     MonthlyDebtSummary (..),
     normalizeTotals,
+    showSummariesWithNames,
     singleMonthSummary,
     summarizeDebt,
   )
@@ -26,16 +27,38 @@ data MonthlyDebtSummary = MonthlyDebtSummary
 instance Show MonthlyDebtSummary where
   show summary =
     mconcat
-      [ "Date: ",
+      [ "Month: ",
         show $ month summary,
-        "\tTotal Paid: $",
+        "\tCombined expenses: $",
         showRounded $ totalPaid summary,
         "\tResult: ",
         show $ outcome summary,
-        ", $",
+        " -- $",
         showRounded $ amountOwed summary,
         " owed\n"
       ]
+
+-- If we have names defined, can make the output a little easier to parse
+showSummaryWithNames :: String -> String -> MonthlyDebtSummary -> String
+showSummaryWithNames n1 n2 summary =
+  mconcat
+    [ "Month: ",
+      show $ month summary,
+      "\tCombined expenses: $",
+      showRounded $ totalPaid summary,
+      "\tResult: ",
+      showOutcomeWithNames n1 n2 (outcome summary),
+      " -- $",
+      showRounded $ amountOwed summary,
+      " owed\n"
+    ]
+
+-- Just stringify and concat
+showSummariesWithNames :: String -> String -> [MonthlyDebtSummary] -> String
+showSummariesWithNames n1 n2 = foldl concatSum ""
+  where
+    concatSum str summary = mconcat [str, showWithNames summary] -- just for folding!
+    showWithNames = showSummaryWithNames n1 n2
 
 -- Don't actually round the values when computing, but round to two decimal
 -- places when showing as a String.
@@ -46,6 +69,12 @@ showRounded = printf "%.2f"
 -- The three possible scenarios for a given month
 data DebtOutcome = P1OwesP2 | P2OwesP1 | ExpensesEqual
   deriving (Show, Eq)
+
+-- If we have names defined, can make the output a little easier to parse
+showOutcomeWithNames :: String -> String -> DebtOutcome -> String
+showOutcomeWithNames n1 n2 P1OwesP2 = mconcat [n1, " owes ", n2]
+showOutcomeWithNames n1 n2 P2OwesP1 = mconcat [n2, " owes ", n1]
+showOutcomeWithNames n1 n2 ExpensesEqual = "Expenses equal!"
 
 -- The main thing. Given a list of monthly totals, one for each person,
 -- summarizes the debts owed between the two people for that time span.
