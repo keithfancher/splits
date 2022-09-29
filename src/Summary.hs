@@ -24,19 +24,9 @@ data MonthlyDebtSummary = MonthlyDebtSummary
   }
   deriving (Eq)
 
+-- Default Show instance uses default names. Respect the classics!
 instance Show MonthlyDebtSummary where
-  show summary =
-    mconcat
-      [ "Month: ",
-        show $ month summary,
-        "\tCombined expenses: $",
-        showRounded $ totalPaid summary,
-        "\tResult: ",
-        show $ outcome summary,
-        " -- $",
-        showRounded $ amountOwed summary,
-        " owed\n"
-      ]
+  show = showSummaryWithNames "Alice" "Bob"
 
 -- If we have names defined, can make the output a little easier to parse
 showSummaryWithNames :: String -> String -> MonthlyDebtSummary -> String
@@ -74,7 +64,7 @@ data DebtOutcome = P1OwesP2 | P2OwesP1 | ExpensesEqual
 showOutcomeWithNames :: String -> String -> DebtOutcome -> String
 showOutcomeWithNames n1 n2 P1OwesP2 = mconcat [n1, " owes ", n2]
 showOutcomeWithNames n1 n2 P2OwesP1 = mconcat [n2, " owes ", n1]
-showOutcomeWithNames n1 n2 ExpensesEqual = "Expenses equal!"
+showOutcomeWithNames _ _ ExpensesEqual = "Expenses equal!"
 
 -- The main thing. Given a list of monthly totals, one for each person,
 -- summarizes the debts owed between the two people for that time span.
