@@ -22,18 +22,19 @@ spec = do
       parseLine simpleConf simpleCsvLine `shouldBe` Right simpleLineResult
 
     it "returns a ParseError when parsing an invalid `amount`" $ do
-      parseLine badAmountConf simpleCsvLine `shouldSatisfy` isParseError
+      parseLine badAmountConf simpleCsvLine `shouldSatisfy` is ParseError
 
     it "returns an InvalidInput error when given an out-of-bounds index" $ do
-      parseLine outOfBoundsConf simpleCsvLine `shouldSatisfy` isInvalidInput
+      parseLine outOfBoundsConf simpleCsvLine `shouldSatisfy` is InvalidInput
 
-isParseError :: Either Error a -> Bool
-isParseError (Left (Error ParseError _)) = True
-isParseError _ = False
-
-isInvalidInput :: Either Error a -> Bool
-isInvalidInput (Left (Error InvalidInput _)) = True
-isInvalidInput _ = False
+-- Check whether a return value contains an error of the expected type. Useful
+-- because we don't want to verify the error *message*, just the type. This is
+-- particularly handy when combined with hspec's `shouldSatisfy`, thanks to the
+-- magic of partial application.
+is :: ErrorType -> Either Error a -> Bool
+is expectedType retVal = case retVal of
+  Left (Error t _) | t == expectedType -> True
+  _ -> False
 
 simpleConf =
   ParseConf
