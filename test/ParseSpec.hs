@@ -8,17 +8,19 @@ spec :: Spec
 spec = do
   describe "parse" $ do
     it "returns an empty list given an empty string" $ do
-      parse simpleConf "" `shouldBe` []
+      parse simpleConf "" `shouldBe` Right []
 
     it "parses a correctly-formed CSV" $ do
-      parse simpleConf simpleCsv `shouldBe` simpleResult
+      parse simpleConf simpleCsv `shouldBe` Right simpleResult
 
     it "parses a correctly-formed CSV that includes a header" $ do
-      parse headerConf csvWithHeader `shouldBe` simpleResult
+      parse headerConf csvWithHeader `shouldBe` Right simpleResult
 
   describe "parseLine" $ do
     it "parses a correctly-formed CSV line" $ do
-      parseLine simpleConf simpleCsvLine `shouldBe` simpleLineResult
+      parseLine simpleConf simpleCsvLine `shouldBe` Right simpleLineResult
+
+-- TODO: parse failure cases
 
 simpleConf =
   ParseConf

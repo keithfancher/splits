@@ -10,13 +10,13 @@ spec :: Spec
 spec = do
   describe "process" $ do
     it "processes and summarizes two (minimal) well-formed sets of debts correctly!" $ do
-      process testConf simpleCsv1 simpleCsv2 `shouldBe` expectedSummaries
+      process testConf simpleCsv1 simpleCsv2 `shouldBe` Right expectedSummaries
 
     it "processes and summarizes two (full-fledged) well-formed sets of debts correctly!" $ do
-      process bigConf bigCsvData1 bigCsvData2 `shouldBe` bigSummaries
+      process bigConf bigCsvData1 bigCsvData2 `shouldBe` Right bigSummaries
 
     it "process empty text input successfully, returning empty list" $ do
-      process testConf "" "" `shouldBe` []
+      process testConf "" "" `shouldBe` Right []
 
 testConf =
   ParseConf
