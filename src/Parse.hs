@@ -32,29 +32,34 @@ parse conf expensesCsv = mapM parseWithConf linesWithoutHeader
 
 --  One row from the CSV. Parse out a single `Expense` object.
 parseLine :: ParseConf -> T.Text -> Either Error Expense
-parseLine conf csvLine = Expense date <$> amount
+parseLine conf csvLine = Expense <$> date <*> amount
   where
     splitText = T.splitOn (colSep conf) csvLine
-    date = parseDate (splitText !! dateColNum conf)
+    date = (splitText `nth` dateColNum conf) >>= parseDate
     amountText = splitText `nth` amountColNum conf
-    amount = amountText >>= parseAmount
-
-parseAmount :: T.Text -> Either Error Double
-parseAmount a = case readMaybe (T.unpack a) of
-  Just amt -> Right amt
-  Nothing -> Left $ mkError ParseError ("Error parsing amount: " <> a)
+    amount = amountText >>= readDouble
 
 -- TODO: This is extremely specific to my own data right now, with basically no
 -- room for error. Probably use a library to do this more flexibly.
-parseDate :: T.Text -> Date
-parseDate dateText = Date year month day
+parseDate :: T.Text -> Either Error Date
+parseDate dateText = Date <$> year <*> month <*> day
   where
     dateSeparator = "/"
     splitText = T.splitOn dateSeparator dateText
     year = toInt 2
     month = toInt 0
     day = toInt 1
-    toInt index = read $ T.unpack $ splitText !! index :: Int
+    toInt index = splitText `nth` index >>= readInt
+
+readDouble :: T.Text -> Either Error Double
+readDouble t = case readMaybe (T.unpack t) of
+  Just d -> Right d
+  Nothing -> Left $ mkError ParseError ("Error parsing double value: " <> t)
+
+readInt :: T.Text -> Either Error Int
+readInt t = case readMaybe (T.unpack t) of
+  Just i -> Right i
+  Nothing -> Left $ mkError ParseError ("Error parsing integer value: " <> t)
 
 -- A (hopefully?!) safe version of `!!`. Won't die with invalid index, has a
 -- maybe-useful error message.

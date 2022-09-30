@@ -27,6 +27,9 @@ spec = do
     it "returns an InvalidInput error when given an out-of-bounds index" $ do
       parseLine outOfBoundsConf simpleCsvLine `shouldSatisfy` is InvalidInput
 
+    it "returns an InvalidInput error when parsing an invalid date" $ do
+      parseLine badDateConf simpleCsvLine `shouldSatisfy` is InvalidInput
+
 -- Check whether a return value contains an error of the expected type. Useful
 -- because we don't want to verify the error *message*, just the type. This is
 -- particularly handy when combined with hspec's `shouldSatisfy`, thanks to the
@@ -65,6 +68,14 @@ outOfBoundsConf =
     { colSep = ";",
       dateColNum = 0,
       amountColNum = 20, -- out of bounds!
+      dataStartRow = 0 -- data starts immediately
+    }
+
+badDateConf =
+  ParseConf
+    { colSep = ";",
+      dateColNum = 1, -- this is the index for description, not date!
+      amountColNum = 2,
       dataStartRow = 0 -- data starts immediately
     }
 
