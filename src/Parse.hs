@@ -21,6 +21,7 @@ data ParseConf = ParseConf
     -- header row at `0`, this value might be `1`)
     dataStartRow :: Int
   }
+  deriving (Eq, Show)
 
 -- Given a CSV (as Text), parse it out into a list of `Expense` objects. We'll
 -- need some config data to know exactly how to parse out the data we need.
