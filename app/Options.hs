@@ -1,7 +1,26 @@
-module Options (cliOpts) where
+module Options
+  ( cliOptParser,
+    CliOptions (..),
+  )
+where
 
 import Options.Applicative
 import Parse (ParseConf (..))
+
+-- Need a type to encapsulate everything coming in from the CLI -- parse
+-- configs as well as the two filenames.
+data CliOptions = CliOptions
+  { parseConf :: ParseConf,
+    csvFile1 :: FilePath,
+    csvFile2 :: FilePath
+  }
+
+cliOptionsParser :: Parser CliOptions
+cliOptionsParser =
+  CliOptions
+    <$> configParser
+    <*> argument str (metavar "CSVFILE1")
+    <*> argument str (metavar "CSVFILE2")
 
 configParser :: Parser ParseConf
 configParser =
@@ -42,10 +61,10 @@ configParser =
           <> metavar "INT"
       )
 
-cliOpts :: ParserInfo ParseConf
-cliOpts =
+cliOptParser :: ParserInfo CliOptions
+cliOptParser =
   info
-    (configParser <**> helper)
+    (cliOptionsParser <**> helper)
     ( fullDesc
         <> progDesc "Requires some basic configs to parse the CSV data. The first CSV file will be Alice's expenses. The second will be Bob's. We'll use these names in the output to make things clearer, hopefully."
         <> header "Split shared expenses. Feed me two CSV files!"
