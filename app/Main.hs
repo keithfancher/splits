@@ -14,14 +14,3 @@ main = do
   case debtSummary of
     Left err -> print err
     Right summ -> print summ
-
--- TODO: Pull this from CLI opts or something
--- also, we'll need filenames!
--- defaultConfig :: ParseConf
--- defaultConfig =
---   ParseConf
---     { colSep = ",",
---       dateColNum = 0,
---       amountColNum = 5,
---       dataStartRow = 1
---     }
