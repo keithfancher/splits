@@ -1,6 +1,8 @@
 module Parse
   ( parse,
     parseLine,
+    DateFormat (..),
+    DateParseConf (..),
     ParseConf (..),
   )
 where
@@ -19,9 +21,30 @@ data ParseConf = ParseConf
     amountColNum :: Int,
     -- Zero-indexed row number of the beginning of the data (i.e. if there's a
     -- header row at `0`, this value might be `1`)
-    dataStartRow :: Int
+    dataStartRow :: Int,
+    -- Conf needed to correctly parse the dates fields in the CSV:
+    dateConf :: DateParseConf
   }
   deriving (Eq, Show)
+
+-- Knowing the format (essentially, order of the fields) and the separator, we
+-- can parse the given dates.
+data DateParseConf = DateParseConf
+  { dateFormat :: DateFormat,
+    dateSep :: T.Text
+  }
+  deriving (Eq, Show)
+
+-- As far as I can tell, this sums up pretty much every valid date format, or
+-- at least ones likely to be used in a CSV of expenses. Note that this
+-- specifies the ORDER of the fields only. We also need to know the separator
+-- (e.g. '/' or '-' or whatever). See the full `DateParseConf` type above.
+data DateFormat
+  = YMD -- y/m/d, aka ISO-8601 (e.g. 2022-10-31)
+  | YDM -- y/d/m, aka ??? (e.g. 2022-31-10)
+  | MDY -- m/d/y, aka Amercan-style (e.g. 10-31-2022)
+  | DMY -- d/m/y, aka Euro-style (e.g. 31-10-2022)
+  deriving (Eq, Show, Read)
 
 -- Given a CSV (as Text), parse it out into a list of `Expense` objects. We'll
 -- need some config data to know exactly how to parse out the data we need.
@@ -36,21 +59,22 @@ parseLine :: ParseConf -> T.Text -> Either Error Expense
 parseLine conf csvLine = Expense <$> date <*> amount
   where
     splitText = T.splitOn (colSep conf) csvLine
-    date = (splitText `nth` dateColNum conf) >>= parseDate
+    date = (splitText `nth` dateColNum conf) >>= parseDate (dateConf conf)
     amountText = splitText `nth` amountColNum conf
     amount = amountText >>= readDouble
 
--- TODO: This is extremely specific to my own data right now, with basically no
--- room for error. Probably use a library to do this more flexibly.
-parseDate :: T.Text -> Either Error Date
-parseDate dateText = Date <$> year <*> month <*> day
+-- Attempt to parse out a single `Date`, given some config data and Text.
+parseDate :: DateParseConf -> T.Text -> Either Error Date
+parseDate conf dateText = toDate (dateFormat conf)
   where
-    dateSeparator = "/"
-    splitText = T.splitOn dateSeparator dateText
-    year = toInt 2
-    month = toInt 0
-    day = toInt 1
+    splitText = T.splitOn (dateSep conf) dateText
     toInt index = splitText `nth` index >>= readInt
+    -- Grab fields from correct indices based on date format (our own internal
+    -- `Date` object is essentially Y M D):
+    toDate YMD = Date <$> toInt 0 <*> toInt 1 <*> toInt 2
+    toDate YDM = Date <$> toInt 0 <*> toInt 2 <*> toInt 1
+    toDate MDY = Date <$> toInt 2 <*> toInt 0 <*> toInt 1
+    toDate DMY = Date <$> toInt 2 <*> toInt 1 <*> toInt 0
 
 readDouble :: T.Text -> Either Error Double
 readDouble t = case readMaybe (T.unpack t) of

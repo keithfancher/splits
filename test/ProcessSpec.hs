@@ -1,7 +1,7 @@
 module ProcessSpec (spec) where
 
 import Expense (YearAndMonth (..))
-import Parse (ParseConf (..))
+import Parse (DateFormat (..), DateParseConf (..), ParseConf (..))
 import Process
 import Summary (DebtOutcome (..), MonthlyDebtSummary (..))
 import Test.Hspec
@@ -18,12 +18,16 @@ spec = do
     it "process empty text input successfully, returning empty list" $ do
       process testConf "" "" `shouldBe` Right []
 
+-- Our default date config:
+mdy = DateParseConf MDY "/"
+
 testConf =
   ParseConf
     { colSep = ";",
       dateColNum = 0,
       amountColNum = 2,
-      dataStartRow = 0
+      dataStartRow = 0,
+      dateConf = mdy
     }
 
 simpleCsv1 = "08/06/2022;BIG BURGERZ;-50\n08/31/2022;BIG BURGERZ;-93\n01/23/2023;STUFFZ;300"
@@ -44,7 +48,8 @@ bigConf =
     { colSep = ",",
       dateColNum = 0,
       amountColNum = 5,
-      dataStartRow = 1
+      dataStartRow = 1,
+      dateConf = mdy
     }
 
 -- These two sets of data are taken from a real CSV export from the Chase site,

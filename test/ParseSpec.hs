@@ -39,12 +39,16 @@ is expectedType retVal = case retVal of
   Left (Error t _) | t == expectedType -> True
   _ -> False
 
+-- Our default date config:
+mdy = DateParseConf MDY "/"
+
 simpleConf =
   ParseConf
     { colSep = ";",
       dateColNum = 0,
       amountColNum = 2,
-      dataStartRow = 0 -- data starts immediately
+      dataStartRow = 0, -- data starts immediately
+      dateConf = mdy
     }
 
 headerConf =
@@ -52,7 +56,8 @@ headerConf =
     { colSep = ";",
       dateColNum = 0,
       amountColNum = 2,
-      dataStartRow = 1 -- there's a header with col names before the data
+      dataStartRow = 1, -- there's a header with col names before the data
+      dateConf = mdy
     }
 
 badAmountConf =
@@ -60,7 +65,8 @@ badAmountConf =
     { colSep = ";",
       dateColNum = 0,
       amountColNum = 1, -- this ain't right! 1 is the description
-      dataStartRow = 0 -- data starts immediately
+      dataStartRow = 0, -- data starts immediately
+      dateConf = mdy
     }
 
 outOfBoundsConf =
@@ -68,7 +74,8 @@ outOfBoundsConf =
     { colSep = ";",
       dateColNum = 0,
       amountColNum = 20, -- out of bounds!
-      dataStartRow = 0 -- data starts immediately
+      dataStartRow = 0, -- data starts immediately
+      dateConf = mdy
     }
 
 badDateConf =
@@ -76,7 +83,8 @@ badDateConf =
     { colSep = ";",
       dateColNum = 1, -- this is the index for description, not date!
       amountColNum = 2,
-      dataStartRow = 0 -- data starts immediately
+      dataStartRow = 0, -- data starts immediately
+      dateConf = mdy
     }
 
 simpleCsv = "08/06/2022;BIG BURGERZ;-50.34\n08/31/2022;BIG BURGERZ;-93.21\n01/23/2023;STUFFZ;300"

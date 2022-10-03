@@ -5,7 +5,7 @@ module Options
 where
 
 import Options.Applicative
-import Parse (ParseConf (..))
+import Parse (DateFormat (..), DateParseConf (..), ParseConf (..))
 
 -- Need a type to encapsulate everything coming in from the CLI -- parse
 -- configs as well as the two filenames.
@@ -59,6 +59,28 @@ configParser =
           -- <> showDefault
           -- <> value 0
           <> metavar "INT"
+      )
+    <*> dateConfParser
+
+dateConfParser :: Parser DateParseConf
+dateConfParser =
+  DateParseConf
+    <$> option
+      auto
+      ( long "dateformat"
+          <> short 'f'
+          <> metavar "YMD|YDM|MDY|DMY"
+          <> help "Order of date fields in CSV data"
+          <> showDefault
+          <> value MDY -- American-style by default :')
+      )
+    <*> strOption
+      ( long "datesep"
+          <> short 'x'
+          <> metavar "SEPARATOR"
+          <> help "Character used to separate fields in date (e.g. '/' or '-')"
+          <> showDefault
+          <> value "/"
       )
 
 cliOptParser :: ParserInfo CliOptions
