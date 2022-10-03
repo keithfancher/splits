@@ -21,6 +21,12 @@ spec = do
     it "parses a correctly-formed CSV line" $ do
       parseLine simpleConf simpleCsvLine `shouldBe` Right simpleLineResult
 
+    it "parses a correctly-formed CSV line with date in YMD format" $ do
+      parseLine ymdConf simpleCsvLineYmdDate `shouldBe` Right simpleLineResult
+
+    it "parses a correctly-formed CSV line with date in DMY format" $ do
+      parseLine dmyConf simpleCsvLineDmyDate `shouldBe` Right simpleLineResult
+
     it "returns a ParseError when parsing an invalid `amount`" $ do
       parseLine badAmountConf simpleCsvLine `shouldSatisfy` is ParseError
 
@@ -60,12 +66,30 @@ headerConf =
       dateConf = mdy
     }
 
+ymdConf =
+  ParseConf
+    { colSep = ";",
+      dateColNum = 0,
+      amountColNum = 2,
+      dataStartRow = 0,
+      dateConf = DateParseConf YMD "-" -- different date format, "Y-M-D"
+    }
+
+dmyConf =
+  ParseConf
+    { colSep = ";",
+      dateColNum = 0,
+      amountColNum = 2,
+      dataStartRow = 0,
+      dateConf = DateParseConf DMY "." -- different date format, "D.M.Y"
+    }
+
 badAmountConf =
   ParseConf
     { colSep = ";",
       dateColNum = 0,
       amountColNum = 1, -- this ain't right! 1 is the description
-      dataStartRow = 0, -- data starts immediately
+      dataStartRow = 0,
       dateConf = mdy
     }
 
@@ -74,7 +98,7 @@ outOfBoundsConf =
     { colSep = ";",
       dateColNum = 0,
       amountColNum = 20, -- out of bounds!
-      dataStartRow = 0, -- data starts immediately
+      dataStartRow = 0,
       dateConf = mdy
     }
 
@@ -83,7 +107,7 @@ badDateConf =
     { colSep = ";",
       dateColNum = 1, -- this is the index for description, not date!
       amountColNum = 2,
-      dataStartRow = 0, -- data starts immediately
+      dataStartRow = 0,
       dateConf = mdy
     }
 
@@ -99,5 +123,11 @@ simpleResult =
   ]
 
 simpleCsvLine = "08/06/2022;BIG BURGERZ;-50.34"
+
+-- Same data as above, but date in a diff format:
+simpleCsvLineYmdDate = "2022-08-06;BIG BURGERZ;-50.34"
+
+-- ...and one more time, a different date format:
+simpleCsvLineDmyDate = "6.8.2022;BIG BURGERZ;-50.34"
 
 simpleLineResult = Expense (Date 2022 08 06) (-50.34)
