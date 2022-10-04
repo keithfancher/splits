@@ -32,11 +32,15 @@ showSummaryWithNames n1 n2 summary =
   mconcat
     [ "Month: ",
       show $ month summary,
-      "\tCombined expenses: $",
+      "\tAlice paid: ",
+      showRounded $ p1Total summary,
+      "\tBob paid: ",
+      showRounded $ p2Total summary,
+      "\tCombined expenses: ",
       showRounded $ totalPaid summary,
       "\tResult: ",
       showOutcomeWithNames n1 n2 (outcome summary),
-      " -- $",
+      "\t",
       showRounded $ amountOwed summary,
       " owed\n"
     ]
@@ -52,7 +56,7 @@ showSummariesWithNames n1 n2 = foldl concatSum ""
 -- places when showing as a String.
 -- TODO: Or should we round the data itself? Depends how it'll be used...
 showRounded :: Double -> String
-showRounded = printf "%.2f"
+showRounded = printf "% 8.2f" -- pad with spaces, 8 total width, round to 2 precision
 
 -- The three possible scenarios for a given month
 data DebtOutcome = P1OwesP2 | P2OwesP1 | ExpensesEqual

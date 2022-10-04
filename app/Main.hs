@@ -4,6 +4,7 @@ import Options (CliOptions (..), cliOptParser)
 import Options.Applicative (execParser)
 import Parse (ParseConf (..))
 import Process (processFiles)
+import Summary (showSummariesWithNames)
 
 main :: IO ()
 main = do
@@ -13,4 +14,4 @@ main = do
   debtSummary <- processFiles conf csvfile1 csvfile2
   case debtSummary of
     Left err -> print err
-    Right summ -> print summ
+    Right summ -> putStr (showSummariesWithNames "Alice" "Bob" summ)
