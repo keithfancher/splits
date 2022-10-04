@@ -22,11 +22,7 @@ data MonthlyDebtSummary = MonthlyDebtSummary
     totalPaid :: Double, -- The total paid b/w all parties
     amountOwed :: Double -- The amount the ower owes the owee :'(
   }
-  deriving (Eq)
-
--- Default Show instance uses default names. Respect the classics!
-instance Show MonthlyDebtSummary where
-  show = showSummaryWithNames "Alice" "Bob"
+  deriving (Eq, Show)
 
 -- If we have names defined, can make the output a little easier to parse
 showSummaryWithNames :: String -> String -> MonthlyDebtSummary -> String
