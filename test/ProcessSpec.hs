@@ -35,12 +35,12 @@ simpleCsv1 = "08/06/2022;BIG BURGERZ;-50\n08/31/2022;BIG BURGERZ;-93\n01/23/2023
 simpleCsv2 = "08/28/2022;BIG BURGERZ;-100\n09/12/2022;BIG BURGERZ;-666\n01/15/2023;STUFFZ;9000"
 
 expectedSummaries =
-  [ MonthlyDebtSummary (YearAndMonth 2022 08) P2OwesP1 243 21.5,
-    MonthlyDebtSummary (YearAndMonth 2022 09) P1OwesP2 666 333,
-    MonthlyDebtSummary (YearAndMonth 2022 10) ExpensesEqual 0 0,
-    MonthlyDebtSummary (YearAndMonth 2022 11) ExpensesEqual 0 0,
-    MonthlyDebtSummary (YearAndMonth 2022 12) ExpensesEqual 0 0,
-    MonthlyDebtSummary (YearAndMonth 2023 01) P1OwesP2 9300 4350
+  [ MonthlyDebtSummary (YearAndMonth 2022 08) P2OwesP1 243 21.5 143 100,
+    MonthlyDebtSummary (YearAndMonth 2022 09) P1OwesP2 666 333 0 666,
+    MonthlyDebtSummary (YearAndMonth 2022 10) ExpensesEqual 0 0 0 0,
+    MonthlyDebtSummary (YearAndMonth 2022 11) ExpensesEqual 0 0 0 0,
+    MonthlyDebtSummary (YearAndMonth 2022 12) ExpensesEqual 0 0 0 0,
+    MonthlyDebtSummary (YearAndMonth 2023 01) P1OwesP2 9300 4350 300 9000
   ]
 
 bigConf =
@@ -121,8 +121,8 @@ bigCsvData2 =
   \11/07/2021,11/08/2021,BILL'S FOOD BARN,Food & Drink,Sale,-65.15,\n"
 
 bigSummaries =
-  [ MonthlyDebtSummary (YearAndMonth 2021 10) P2OwesP1 90.23 45.115,
-    MonthlyDebtSummary (YearAndMonth 2021 11) P1OwesP2 1168.29 7.264999999999986,
-    MonthlyDebtSummary (YearAndMonth 2021 12) P2OwesP1 1348.39 304.46500000000003,
-    MonthlyDebtSummary (YearAndMonth 2022 1) P2OwesP1 1869.8400000000001 404.31000000000006
+  [ MonthlyDebtSummary (YearAndMonth 2021 10) P2OwesP1 90.23 45.115 90.23 0,
+    MonthlyDebtSummary (YearAndMonth 2021 11) P1OwesP2 1168.29 7.264999999999986 576.88 591.41,
+    MonthlyDebtSummary (YearAndMonth 2021 12) P2OwesP1 1348.39 304.46500000000003 978.6600000000001 369.73,
+    MonthlyDebtSummary (YearAndMonth 2022 1) P2OwesP1 1869.8400000000001 404.31000000000006 1339.23 530.61
   ]

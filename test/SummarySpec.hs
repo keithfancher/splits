@@ -21,19 +21,19 @@ spec = do
       singleMonthSummary
         (MonthlyTotal (YearAndMonth 2022 04) 500)
         (MonthlyTotal (YearAndMonth 2022 04) 600)
-        `shouldBe` MonthlyDebtSummary (YearAndMonth 2022 04) P1OwesP2 1100 50
+        `shouldBe` MonthlyDebtSummary (YearAndMonth 2022 04) P1OwesP2 1100 50 500 600
 
     it "figures out how much person2 owes person1" $ do
       singleMonthSummary
         (MonthlyTotal (YearAndMonth 2022 04) 1100)
         (MonthlyTotal (YearAndMonth 2022 04) 45)
-        `shouldBe` MonthlyDebtSummary (YearAndMonth 2022 04) P2OwesP1 1145 527.5
+        `shouldBe` MonthlyDebtSummary (YearAndMonth 2022 04) P2OwesP1 1145 527.5 1100 45
 
     it "knows when person1 and person2 are even-steven" $ do
       singleMonthSummary
         (MonthlyTotal (YearAndMonth 2022 04) 1100)
         (MonthlyTotal (YearAndMonth 2022 04) 1100)
-        `shouldBe` MonthlyDebtSummary (YearAndMonth 2022 04) ExpensesEqual 2200 0
+        `shouldBe` MonthlyDebtSummary (YearAndMonth 2022 04) ExpensesEqual 2200 0 1100 1100
 
     -- This is a tricky one. Some datasets use negatives to represent expenses,
     -- some use positives. We need to make sure the "who owes whom" logic works
@@ -42,7 +42,7 @@ spec = do
       singleMonthSummary
         (MonthlyTotal (YearAndMonth 2022 04) (-1300))
         (MonthlyTotal (YearAndMonth 2022 04) (-1100))
-        `shouldBe` MonthlyDebtSummary (YearAndMonth 2022 04) P2OwesP1 2400 100
+        `shouldBe` MonthlyDebtSummary (YearAndMonth 2022 04) P2OwesP1 2400 100 1300 1100
 
   describe "normalizeTotals" $ do
     it "returns zeroed out list given empty totals" $ do
@@ -68,22 +68,22 @@ otherTotals =
 
 -- someTotals + otherTotals:
 expectedSummaries =
-  [ MonthlyDebtSummary (YearAndMonth 2022 11) P1OwesP2 92 4,
-    MonthlyDebtSummary (YearAndMonth 2022 12) ExpensesEqual 0 0,
-    MonthlyDebtSummary (YearAndMonth 2023 1) ExpensesEqual 0 0,
-    MonthlyDebtSummary (YearAndMonth 2023 2) P1OwesP2 1366 17,
-    MonthlyDebtSummary (YearAndMonth 2023 3) P2OwesP1 1365.21 282.605,
-    MonthlyDebtSummary (YearAndMonth 2023 4) ExpensesEqual 0 0,
-    MonthlyDebtSummary (YearAndMonth 2023 5) P1OwesP2 250 125
+  [ MonthlyDebtSummary (YearAndMonth 2022 11) P1OwesP2 92 4 42 50,
+    MonthlyDebtSummary (YearAndMonth 2022 12) ExpensesEqual 0 0 0 0,
+    MonthlyDebtSummary (YearAndMonth 2023 1) ExpensesEqual 0 0 0 0,
+    MonthlyDebtSummary (YearAndMonth 2023 2) P1OwesP2 1366 17 666 700,
+    MonthlyDebtSummary (YearAndMonth 2023 3) P2OwesP1 1365.21 282.605 965.21 400,
+    MonthlyDebtSummary (YearAndMonth 2023 4) ExpensesEqual 0 0 0 0,
+    MonthlyDebtSummary (YearAndMonth 2023 5) P1OwesP2 250 125 0 250
   ]
 
 -- someTotals + []
 oneSidedSummaries =
-  [ MonthlyDebtSummary (YearAndMonth 2022 11) P2OwesP1 42 21,
-    MonthlyDebtSummary (YearAndMonth 2022 12) ExpensesEqual 0 0,
-    MonthlyDebtSummary (YearAndMonth 2023 1) ExpensesEqual 0 0,
-    MonthlyDebtSummary (YearAndMonth 2023 02) P2OwesP1 666 333,
-    MonthlyDebtSummary (YearAndMonth 2023 03) P2OwesP1 965.21 482.605
+  [ MonthlyDebtSummary (YearAndMonth 2022 11) P2OwesP1 42 21 42 0,
+    MonthlyDebtSummary (YearAndMonth 2022 12) ExpensesEqual 0 0 0 0,
+    MonthlyDebtSummary (YearAndMonth 2023 1) ExpensesEqual 0 0 0 0,
+    MonthlyDebtSummary (YearAndMonth 2023 02) P2OwesP1 666 333 666 0,
+    MonthlyDebtSummary (YearAndMonth 2023 03) P2OwesP1 965.21 482.605 965.21 0
   ]
 
 expectedNormalizedTotals =

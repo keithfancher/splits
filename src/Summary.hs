@@ -20,7 +20,9 @@ data MonthlyDebtSummary = MonthlyDebtSummary
   { month :: YearAndMonth,
     outcome :: DebtOutcome,
     totalPaid :: Double, -- The total paid b/w all parties
-    amountOwed :: Double -- The amount the ower owes the owee :'(
+    amountOwed :: Double, -- The amount the ower owes the owee :'(
+    p1Total :: Double, -- The total "person1" paid this month
+    p2Total :: Double -- Ditto for "person2"
   }
   deriving (Eq, Show)
 
@@ -88,6 +90,8 @@ singleMonthSummary t1 t2 =
     (outcome p1total p2total)
     combinedTotal
     amountOwed
+    p1total
+    p2total
   where
     -- Note the call to `abs`. Need to normalize here so we can consistently
     -- decide who owes whom, regardless of whether credits or debits are
