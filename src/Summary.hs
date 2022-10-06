@@ -8,6 +8,7 @@ module Summary
   )
 where
 
+import Data.List (sortBy)
 import qualified Data.Map as Map
 import Expense (MonthlyTotal (..), YearAndMonth, incrementMonth)
 import Text.Printf (printf)
@@ -74,11 +75,20 @@ summarizeDebt :: [MonthlyTotal] -> [MonthlyTotal] -> [MonthlyDebtSummary]
 summarizeDebt [] [] = [] -- both empty, nothing to do
 summarizeDebt p1totals p2totals = map summarizeMonth zippedTotals
   where
-    (lowerBound, upperBound) = minAndMaxMonths p1totals p2totals
+    -- We know the *combined* list is not empty -- we've handled the "two empty
+    -- lists" case above -- so it's safe to call `head` and `last` here:
+    combinedSortedTotals = sortTotalsByMonth (p1totals ++ p2totals)
+    lowerBound = yearAndMonth (head combinedSortedTotals)
+    upperBound = yearAndMonth (last combinedSortedTotals)
     p1normalized = normalizeTotals lowerBound upperBound p1totals
     p2normalized = normalizeTotals lowerBound upperBound p2totals
     zippedTotals = zip p1normalized p2normalized
     summarizeMonth (t1, t2) = singleMonthSummary t1 t2
+
+sortTotalsByMonth :: [MonthlyTotal] -> [MonthlyTotal]
+sortTotalsByMonth = sortBy compareMonth
+  where
+    compareMonth t1 t2 = compare (yearAndMonth t1) (yearAndMonth t2)
 
 -- Given two monthly totals, one for each person, calculate that month's
 -- summary. Who owes whom and how much.
@@ -111,21 +121,6 @@ singleMonthSummary t1 t2 =
       | p1t < p2t = P1OwesP2
       | p1t > p2t = P2OwesP1
       | otherwise = ExpensesEqual
-
--- Given two list of expenses, calculate the lower and upper bound of the
--- months. Used to normalize the expense lists. Note that it doesn't make sense
--- to call this with two empty lists -- result is undefined.
--- TODO: handle case of two empty lists... use an Either? explicitly return an error?
--- TODO: verify sorted, or sort? Probably best to ensure sorted initially
-minAndMaxMonths :: [MonthlyTotal] -> [MonthlyTotal] -> (YearAndMonth, YearAndMonth)
-minAndMaxMonths p1totals [] = (yearAndMonth (head p1totals), yearAndMonth (last p1totals))
-minAndMaxMonths [] p2totals = (yearAndMonth (head p2totals), yearAndMonth (last p2totals))
-minAndMaxMonths p1totals p2totals = (lowYearAndMonth, highYearAndMonth)
-  where
-    lowYearAndMonth = min (head p1dates) (head p2dates)
-    highYearAndMonth = max (last p1dates) (last p2dates)
-    p1dates = map yearAndMonth p1totals
-    p2dates = map yearAndMonth p2totals
 
 -- Given a low month and a high month, fill in all the "blanks" of a list of
 -- monthly expenses, so the list is contiguous from beginning to end. Any
