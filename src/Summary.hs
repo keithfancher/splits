@@ -91,9 +91,9 @@ singleMonthSummary :: MonthlyTotal -> MonthlyTotal -> MonthlyDebtSummary
 singleMonthSummary t1 t2 =
   MonthlyDebtSummary
     (yearAndMonth t1) -- TODO: verify both same month, or error?
-    (outcome p1total p2total)
+    (debtOutcome p1total p2total)
     combinedTotal
-    amountOwed
+    amtOwed
     p1total
     p2total
   where
@@ -106,8 +106,8 @@ singleMonthSummary t1 t2 =
     p2total = abs $ total t2
     combinedTotal = p1total + p2total
     -- For whoever paid less, the diff between half and the amount they paid:
-    amountOwed = (combinedTotal / 2) - min p1total p2total
-    outcome p1t p2t
+    amtOwed = (combinedTotal / 2) - min p1total p2total
+    debtOutcome p1t p2t
       | p1t < p2t = P1OwesP2
       | p1t > p2t = P2OwesP1
       | otherwise = ExpensesEqual
@@ -156,7 +156,7 @@ generateStubTotals minMonth maxMonth = map totalFromTup totals
 
 -- Convenience! Build the object from a tuple of its members.
 totalFromTup :: (YearAndMonth, Double) -> MonthlyTotal
-totalFromTup (yearAndMonth, total) = MonthlyTotal yearAndMonth total
+totalFromTup (ym, tot) = MonthlyTotal ym tot
 
 -- Recursively generate a list of months (and years), given an upper bound and
 -- a starting list of months. Note that this list goes in descending order,

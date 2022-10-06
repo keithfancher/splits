@@ -3,7 +3,6 @@ module Main where
 import Error (printError)
 import Options (CliOptions (..), cliOptParser)
 import Options.Applicative (execParser)
-import Parse (ParseConf (..))
 import Process (processFiles)
 import Summary (showSummariesWithNames)
 

@@ -21,7 +21,7 @@ data ErrorType = ParseError | InvalidInput | FileNotFound
 
 -- Slight convenience!
 mkError :: ErrorType -> T.Text -> Error
-mkError e msg = Error e (Just msg)
+mkError e m = Error e (Just m)
 
 printError :: Error -> IO ()
 printError = TIO.putStrLn . showError

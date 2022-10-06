@@ -56,12 +56,12 @@ parse conf expensesCsv = mapM parseWithConf linesWithoutHeader
 
 --  One row from the CSV. Parse out a single `Expense` object.
 parseLine :: ParseConf -> T.Text -> Either Error Expense
-parseLine conf csvLine = Expense <$> date <*> amount
+parseLine conf csvLine = Expense <$> expDate <*> expAmount
   where
     splitText = T.splitOn (colSep conf) csvLine
-    date = (splitText `nth` dateColNum conf) >>= parseDate (dateConf conf)
+    expDate = (splitText `nth` dateColNum conf) >>= parseDate (dateConf conf)
     amountText = splitText `nth` amountColNum conf
-    amount = amountText >>= readDouble
+    expAmount = amountText >>= readDouble
 
 -- Attempt to parse out a single `Date`, given some config data and Text.
 parseDate :: DateParseConf -> T.Text -> Either Error Date
@@ -92,9 +92,9 @@ readInt t = case readMaybe (T.unpack t) of
 nth :: Show a => [a] -> Int -> Either Error a
 nth xs i = case drop i xs of
   x : _ -> Right x
-  [] -> Left $ mkError InvalidInput msg
+  [] -> Left $ mkError InvalidInput message
     where
-      msg = "Out of bounds index: `" <> text i <> "` in array: " <> text xs
+      message = "Out of bounds index: `" <> text i <> "` in array: " <> text xs
 
 -- Convert any Show instance to Text
 text :: Show a => a -> T.Text
