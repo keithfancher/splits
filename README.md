@@ -62,10 +62,14 @@ few basic bits of info about the shape of your CSV data.)
 * CSV parsing is pretty rudimentary. For example, there's currently no way to
   escape data that includes the CSV separator character in it (data with a
   comma in it, say). We're simply splitting the string on the separator.
-  (Check out https://www.stackage.org/lts-19.25/package/parsec-3.1.14.0 ?)
+  (Perhaps use
+  [parsec](https://www.stackage.org/lts-19.25/package/parsec-3.1.14.0) for
+  fancier parsing?)
 * Instead of the user specifying a date format, we could try to guess it based
   on the shape of the data alone. Could also allow arbitrary date strings
-  instead of the limited set of valid date formats currently allowed
-  (https://www.stackage.org/lts-19.25/package/fuzzy-dates-0.1.1.2 or
-  https://hackage.haskell.org/package/dates-0.2.3.2/docs/Data-Dates.html ?)
+  instead of the limited set of valid date formats currently allowed. (Maybe
+  check out
+  [fuzzy-dates](https://www.stackage.org/lts-19.25/package/fuzzy-dates-0.1.1.2)
+  or
+  [Data.Dates](https://hackage.haskell.org/package/dates-0.2.3.2/docs/Data-Dates.html)?)
 * Probably don't use this :')
