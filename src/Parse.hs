@@ -94,7 +94,7 @@ nth xs i = case drop i xs of
   x : _ -> Right x
   [] -> Left $ mkError InvalidInput msg
     where
-      msg = "Out of bounds index: " <> text i <> " in array: " <> text xs
+      msg = "Out of bounds index: `" <> text i <> "` in array: " <> text xs
 
 -- Convert any Show instance to Text
 text :: Show a => a -> T.Text

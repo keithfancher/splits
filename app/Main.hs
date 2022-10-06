@@ -1,5 +1,6 @@
 module Main where
 
+import Error (printError)
 import Options (CliOptions (..), cliOptParser)
 import Options.Applicative (execParser)
 import Parse (ParseConf (..))
@@ -13,5 +14,5 @@ main = do
   putStrLn ("Reading Bob's expenses from: " ++ csvfile1)
   debtSummary <- processFiles conf csvfile1 csvfile2
   case debtSummary of
-    Left err -> print err
+    Left err -> printError err
     Right summ -> putStr (showSummariesWithNames "Alice" "Bob" summ)
