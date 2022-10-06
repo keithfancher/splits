@@ -87,13 +87,14 @@ readInt t = case readMaybe (T.unpack t) of
   Nothing -> Left $ mkError ParseError ("Error parsing integer value: " <> t)
 
 -- A (hopefully?!) safe version of `!!`. Won't die with invalid index, has a
--- maybe-useful error message.
-nth :: [a] -> Int -> Either Error a
+-- maybe-useful error message. Limiting to instances of `Show` for better error
+-- messaging.
+nth :: Show a => [a] -> Int -> Either Error a
 nth xs i = case drop i xs of
   x : _ -> Right x
   [] -> Left $ mkError InvalidInput msg
     where
-      msg = "Index out of bounds: " <> text i <> "... check your config?"
+      msg = "Out of bounds index: " <> text i <> " in array: " <> text xs
 
 -- Convert any Show instance to Text
 text :: Show a => a -> T.Text
