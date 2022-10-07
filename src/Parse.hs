@@ -1,6 +1,7 @@
 module Parse
   ( parse,
     parseLine,
+    CSV,
     DateFormat (..),
     DateParseConf (..),
     ParseConf (..),
@@ -46,16 +47,20 @@ data DateFormat
   | DMY -- d/m/y, aka Euro-style (e.g. 31-10-2022)
   deriving (Eq, Show, Read)
 
+type CSV = T.Text -- Full Text of a CSV
+
+type CSVLine = T.Text -- A single line from a CSV
+
 -- Given a CSV (as Text), parse it out into a list of `Expense` objects. We'll
 -- need some config data to know exactly how to parse out the data we need.
-parse :: ParseConf -> T.Text -> Either Error [Expense]
+parse :: ParseConf -> CSV -> Either Error [Expense]
 parse conf expensesCsv = mapM parseWithConf linesWithoutHeader
   where
     parseWithConf = parseLine conf -- partial application magic!
     linesWithoutHeader = drop (dataStartRow conf) (T.lines expensesCsv)
 
 --  One row from the CSV. Parse out a single `Expense` object.
-parseLine :: ParseConf -> T.Text -> Either Error Expense
+parseLine :: ParseConf -> CSVLine -> Either Error Expense
 parseLine conf csvLine = Expense <$> expDate <*> expAmount
   where
     splitText = T.splitOn (colSep conf) csvLine
