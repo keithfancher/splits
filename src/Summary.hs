@@ -10,6 +10,7 @@ where
 
 import Data.List (sortBy)
 import qualified Data.Map as Map
+import Error (Error, ErrorType (..), mkError)
 import Expense (MonthlyTotal (..), YearAndMonth, incrementMonth)
 import Text.Printf (printf)
 
@@ -71,9 +72,9 @@ showOutcomeWithNames _ _ ExpensesEqual = "Expenses equal!"
 
 -- The main thing. Given a list of monthly totals, one for each person,
 -- summarizes the debts owed between the two people for that time span.
-summarizeDebt :: [MonthlyTotal] -> [MonthlyTotal] -> [MonthlyDebtSummary]
-summarizeDebt [] [] = [] -- both empty, nothing to do
-summarizeDebt p1totals p2totals = map summarizeMonth zippedTotals
+summarizeDebt :: [MonthlyTotal] -> [MonthlyTotal] -> Either Error [MonthlyDebtSummary]
+summarizeDebt [] [] = Right [] -- both empty, nothing to do
+summarizeDebt p1totals p2totals = mapM summarizeMonth zippedTotals
   where
     -- We know the *combined* list is not empty -- we've handled the "two empty
     -- lists" case above -- so it's safe to call `head` and `last` here:
@@ -97,15 +98,21 @@ sortTotalsByMonth = sortBy compareMonth
 -- way for us to know which number is greater, because we can't know whether
 -- the dataset uses positives or negatives for debits/credits. Perhaps a config
 -- option to get around this?
-singleMonthSummary :: MonthlyTotal -> MonthlyTotal -> MonthlyDebtSummary
-singleMonthSummary t1 t2 =
-  MonthlyDebtSummary
-    (yearAndMonth t1) -- TODO: verify both same month, or error?
-    (debtOutcome p1total p2total)
-    combinedTotal
-    amtOwed
-    p1total
-    p2total
+singleMonthSummary :: MonthlyTotal -> MonthlyTotal -> Either Error MonthlyDebtSummary
+singleMonthSummary t1 t2
+  | yearAndMonth t1 /= yearAndMonth t2 =
+      -- If they've got different months, it's a bug. Fail rather than give possibly-suspect results:
+      Left $ mkError InternalError "Totals from different months cannot be compared"
+  | otherwise =
+      Right
+        ( MonthlyDebtSummary
+            (yearAndMonth t1)
+            (debtOutcome p1total p2total)
+            combinedTotal
+            amtOwed
+            p1total
+            p2total
+        )
   where
     -- Note the call to `abs`. Need to normalize here so we can consistently
     -- decide who owes whom, regardless of whether credits or debits are
