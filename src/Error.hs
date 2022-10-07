@@ -1,6 +1,7 @@
 module Error
   ( Error (..),
     ErrorType (..),
+    is,
     mkError,
     printError,
     showError,
@@ -33,3 +34,12 @@ showError (Error e m) =
     Nothing -> ""
   where
     eText = T.pack (show e)
+
+-- Check whether a return value contains an error of the expected type. Useful
+-- because we don't always want to verify the error *message*, just the type.
+-- This is particularly handy when combined with hspec's `shouldSatisfy`,
+-- thanks to the magic of partial application.
+is :: ErrorType -> Either Error a -> Bool
+is expectedType retVal = case retVal of
+  Left (Error t _) | t == expectedType -> True
+  _ -> False

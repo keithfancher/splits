@@ -1,6 +1,6 @@
 module ParseSpec (spec) where
 
-import Error (Error (..), ErrorType (..))
+import Error (Error (..), ErrorType (..), is)
 import Expense (Date (..), Expense (..))
 import Parse
 import Test.Hspec
@@ -35,15 +35,6 @@ spec = do
 
     it "returns an InvalidInput error when parsing an invalid date" $ do
       parseLine badDateConf simpleCsvLine `shouldSatisfy` is InvalidInput
-
--- Check whether a return value contains an error of the expected type. Useful
--- because we don't want to verify the error *message*, just the type. This is
--- particularly handy when combined with hspec's `shouldSatisfy`, thanks to the
--- magic of partial application.
-is :: ErrorType -> Either Error a -> Bool
-is expectedType retVal = case retVal of
-  Left (Error t _) | t == expectedType -> True
-  _ -> False
 
 -- Our default date config:
 mdy = DateParseConf MDY "/"
