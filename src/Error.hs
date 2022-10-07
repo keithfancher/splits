@@ -16,7 +16,7 @@ data Error = Error
   }
   deriving (Show, Eq)
 
-data ErrorType = ParseError | InvalidInput | FileNotFound
+data ErrorType = ParseError | InvalidInput | FileNotFound | InternalError
   deriving (Show, Eq)
 
 -- Slight convenience!
