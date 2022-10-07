@@ -18,7 +18,6 @@ spec = do
     it "doesn't care about weird dates, since that doesn't matter" $ do
       processExpenses weirdDateExpenses `shouldBe` expectedWeirdDateResults
 
--- TODO: Maybe group inputs/outputs as tuples or something?
 -- TODO: Could also throw in some QuickCheck tests in addition to the explicit in/out pairs...
 unorderedExpenses :: [Expense]
 unorderedExpenses = [e4, e3, e2, e1]
