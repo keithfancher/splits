@@ -149,11 +149,13 @@ totalsToMap totals = Map.fromList (map toTuple totals)
 
 -- Generate a "stub" of monthly totals, all zeroed, from the beginning month to
 -- ending month specified (inclusive).
--- TODO: just make this work even if args are reversed, avoid the need for error checking altogether
 generateStubTotals :: YearAndMonth -> YearAndMonth -> [MonthlyTotal]
 generateStubTotals minMonth maxMonth = map totalFromTup totals
   where
-    months = reverse (generateMonths maxMonth [minMonth]) -- Months are generated in descending order, so reverse it
+    -- Calling min/max ensures it'll work even with args reversed, removes need for error checking these:
+    trueMin = min minMonth maxMonth
+    trueMax = max minMonth maxMonth
+    months = reverse (generateMonths trueMax [trueMin]) -- Months are generated in descending order, so reverse it
     totals = zip months (repeat 0)
 
 -- Convenience! Build the object from a tuple of its members.

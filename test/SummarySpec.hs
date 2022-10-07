@@ -60,6 +60,10 @@ spec = do
       normalizeTotals (YearAndMonth 2022 09) (YearAndMonth 2023 04) someTotals
         `shouldBe` expectedNormalizedTotals
 
+    it "works even if min and max args are reversed" $ do
+      normalizeTotals (YearAndMonth 2023 04) (YearAndMonth 2022 09) someTotals
+        `shouldBe` expectedNormalizedTotals
+
 someTotals =
   [ MonthlyTotal (YearAndMonth 2022 11) 42,
     MonthlyTotal (YearAndMonth 2023 02) 666,
