@@ -57,7 +57,6 @@ showSummariesWithNames n1 n2 = foldl concatSum ""
 
 -- Don't actually round the values when computing, but round to two decimal
 -- places when showing as a String.
--- TODO: Or should we round the data itself? Depends how it'll be used...
 showRounded :: Double -> String
 showRounded = printf "% 8.2f" -- pad with spaces, 8 total width, round to 2 precision
 
