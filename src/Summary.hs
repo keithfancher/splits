@@ -8,7 +8,7 @@ module Summary
   )
 where
 
-import Data.List (sortBy)
+import Data.List (foldl', sortBy)
 import qualified Data.List.NonEmpty as NE
 import qualified Data.Map as Map
 import Error (Error, ErrorType (..), mkError)
@@ -50,7 +50,7 @@ showSummaryWithNames n1 n2 summary =
 
 -- Just stringify and concat
 showSummariesWithNames :: String -> String -> [MonthlyDebtSummary] -> String
-showSummariesWithNames n1 n2 = foldl concatSum ""
+showSummariesWithNames n1 n2 = foldl' concatSum ""
   where
     concatSum str summary = mconcat [str, showWithNames summary] -- just for folding!
     showWithNames = showSummaryWithNames n1 n2
