@@ -8,7 +8,7 @@ module Summary
   )
 where
 
-import Data.List (foldl', sortBy)
+import Data.List (foldl')
 import qualified Data.List.NonEmpty as NE
 import qualified Data.Map as Map
 import Error (Error, ErrorType (..), mkError)
