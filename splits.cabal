@@ -36,6 +36,7 @@ library
       src
   default-extensions:
       OverloadedStrings
+      StrictData
   build-depends:
       base >=4.7 && <5
     , containers
@@ -51,6 +52,7 @@ executable splits
       app
   default-extensions:
       OverloadedStrings
+      StrictData
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
@@ -73,6 +75,7 @@ test-suite splits-test
       test
   default-extensions:
       OverloadedStrings
+      StrictData
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5

@@ -26,6 +26,8 @@ dependencies:
 
 default-extensions: # use this in favor of deprecated "extensions"
 - OverloadedStrings # raw strings and Data.Text play well together
+- StrictData # "lazy fields in data types can lead to unexpected space leaks"
+
 
 library:
   source-dirs: src
