@@ -64,6 +64,13 @@ showRounded = printf "% 8.2f" -- pad with spaces, 8 total width, round to 2 prec
 data DebtOutcome = P1OwesP2 | P2OwesP1 | ExpensesEqual
   deriving (Show, Eq)
 
+-- Given two totals, get the corresponding DebtOutcome
+debtOutcome :: Ord a => a -> a -> DebtOutcome
+debtOutcome total1 total2 = case compare total1 total2 of
+  LT -> P1OwesP2
+  GT -> P2OwesP1
+  EQ -> ExpensesEqual
+
 -- If we have names defined, can make the output a little easier to parse
 showOutcomeWithNames :: String -> String -> DebtOutcome -> String
 showOutcomeWithNames n1 n2 P1OwesP2 = mconcat [n1, " owes ", n2]
@@ -128,10 +135,6 @@ singleMonthSummary t1 t2
     combinedTotal = p1total + p2total
     -- For whoever paid less, the diff between half and the amount they paid:
     amtOwed = (combinedTotal / 2) - min p1total p2total
-    debtOutcome p1t p2t
-      | p1t < p2t = P1OwesP2
-      | p1t > p2t = P2OwesP1
-      | otherwise = ExpensesEqual
 
 -- Given a low month and a high month, fill in all the "blanks" of a list of
 -- monthly expenses, so the list is contiguous from beginning to end. Any
