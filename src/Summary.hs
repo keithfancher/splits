@@ -9,6 +9,7 @@ module Summary
 where
 
 import Data.List (sortBy)
+import qualified Data.List.NonEmpty as NE
 import qualified Data.Map as Map
 import Error (Error, ErrorType (..), mkError)
 import Expense (MonthlyTotal (..), YearAndMonth, incrementMonth)
@@ -155,7 +156,8 @@ generateStubTotals minMonth maxMonth = map totalFromTup totals
     -- Calling min/max ensures it'll work even with args reversed, removes need for error checking these:
     trueMin = min minMonth maxMonth
     trueMax = max minMonth maxMonth
-    months = reverse (generateMonths trueMax [trueMin]) -- Months are generated in descending order, so reverse it
+    -- Months are generated in descending order, so reverse it
+    months = reverse (generateMonths trueMax (NE.fromList [trueMin]))
     totals = zip months (repeat 0)
 
 -- Convenience! Build the object from a tuple of its members.
@@ -165,11 +167,11 @@ totalFromTup (ym, tot) = MonthlyTotal ym tot
 -- Recursively generate a list of months (and years), given an upper bound and
 -- a starting list of months. Note that this list goes in descending order,
 -- mostly to make it easy to prepend the next value as we go.
-generateMonths :: YearAndMonth -> [YearAndMonth] -> [YearAndMonth]
+generateMonths :: YearAndMonth -> NE.NonEmpty YearAndMonth -> [YearAndMonth]
 generateMonths upperBound months =
   if latestMonth == upperBound -- then we're done
-    then months
-    else generateMonths upperBound (nextMonth : months)
+    then NE.toList months
+    else generateMonths upperBound (nextMonth `NE.cons` months)
   where
-    latestMonth = head months
+    latestMonth = NE.head months
     nextMonth = incrementMonth latestMonth
