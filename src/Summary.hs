@@ -77,18 +77,22 @@ summarizeDebt [] [] = Right [] -- both empty, nothing to do
 summarizeDebt p1totals p2totals = mapM summarizeMonth zippedTotals
   where
     -- We know the *combined* list is not empty -- we've handled the "two empty
-    -- lists" case above -- so it's safe to call `head` and `last` here:
-    combinedSortedTotals = sortTotalsByMonth (p1totals ++ p2totals)
-    lowerBound = yearAndMonth (head combinedSortedTotals)
-    upperBound = yearAndMonth (last combinedSortedTotals)
+    -- lists" case above -- so `fromList` is safe here:
+    (lowerBound, upperBound) = getDateBounds $ NE.fromList $ p1totals ++ p2totals
     p1normalized = normalizeTotals lowerBound upperBound p1totals
     p2normalized = normalizeTotals lowerBound upperBound p2totals
     zippedTotals = zip p1normalized p2normalized
     summarizeMonth (t1, t2) = singleMonthSummary t1 t2
 
-sortTotalsByMonth :: [MonthlyTotal] -> [MonthlyTotal]
-sortTotalsByMonth = sortBy compareMonth
+-- Given a (non-empty!) list of totals, get the earliest and latest
+-- YearAndMonths in that list as a tuple.
+getDateBounds :: NE.NonEmpty MonthlyTotal -> (YearAndMonth, YearAndMonth)
+getDateBounds totals = (lowerBound, upperBound)
   where
+    lowerBound = yearAndMonth (NE.head sortedTotals)
+    upperBound = yearAndMonth (NE.last sortedTotals)
+    sortedTotals = sortTotalsByMonth totals
+    sortTotalsByMonth = NE.sortBy compareMonth
     compareMonth t1 t2 = compare (yearAndMonth t1) (yearAndMonth t2)
 
 -- Given two monthly totals, one for each person, calculate that month's
