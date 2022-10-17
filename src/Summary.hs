@@ -103,17 +103,12 @@ getDateBounds totals = (lowerBound, upperBound)
     compareMonth t1 t2 = compare (yearAndMonth t1) (yearAndMonth t2)
 
 -- Given two monthly totals, one for each person, calculate that month's
--- summary. Who owes whom and how much.
---
--- TODO: If two monthly totals have different signs, throw an error. There's no
--- way for us to know which number is greater, because we can't know whether
--- the dataset uses positives or negatives for debits/credits. Perhaps a config
--- option to get around this?
+-- summary. Who owes whom and how much. Plus a bit of validation to make sure
+-- the data is sane.
 singleMonthSummary :: MonthlyTotal -> MonthlyTotal -> Either Error MonthlyDebtSummary
 singleMonthSummary t1 t2
-  | yearAndMonth t1 /= yearAndMonth t2 =
-      -- If they've got different months, it's a bug. Fail rather than give possibly-suspect results:
-      Left $ mkError InternalError "Totals from different months cannot be compared"
+  | not (sameMonth t1 t2) = Left diffMonthErr
+  | not (sameSign t1 t2) = Left diffSignErr
   | otherwise =
       Right
         ( MonthlyDebtSummary
@@ -135,6 +130,31 @@ singleMonthSummary t1 t2
     combinedTotal = p1total + p2total
     -- For whoever paid less, the diff between half and the amount they paid:
     amtOwed = (combinedTotal / 2) - min p1total p2total
+    -- If they've got different months, it's a bug. Fail rather than give possibly-suspect results:
+    diffMonthErr = mkError InternalError "Totals from different months cannot be compared"
+    -- I'll have to think more about this limitation. We can't currently know
+    -- whether a given dataset uses positives or negatives for
+    -- debits/credits. If they're different signs, it could be because one
+    -- person only has credits that month OR it could be that the two
+    -- datasets use different representations. Config option to fix this?
+    diffSignErr = mkError InternalError "Monthly totals of different signs cannot be compared"
+
+-- Are two monthly totals from the same month?
+sameMonth :: MonthlyTotal -> MonthlyTotal -> Bool
+sameMonth t1 t2 = yearAndMonth t1 == yearAndMonth t2
+
+-- Return True if we consider the `total` field of these totals to be the same
+-- sign, or equivalent. For example, both positive or both negative. Note that
+-- zero is "neutral" here, is compatible with either positive or negative.
+sameSign :: MonthlyTotal -> MonthlyTotal -> Bool
+sameSign t1 t2
+  | s1 == s2 = True -- Actually the same sign
+  | s1 == 0 || s2 == 0 = True -- Either one is zero
+  | otherwise = False
+  where
+    s1 = sign t1
+    s2 = sign t2
+    sign = signum . total
 
 -- Given a low month and a high month, fill in all the "blanks" of a list of
 -- monthly expenses, so the list is contiguous from beginning to end. Any

@@ -45,10 +45,22 @@ spec = do
         (MonthlyTotal (YearAndMonth 2022 04) (-1100))
         `shouldBe` Right (MonthlyDebtSummary (YearAndMonth 2022 04) P2OwesP1 2400 100 1300 1100)
 
+    it "compares correctly when one person has zero expenses that month" $ do
+      singleMonthSummary
+        (MonthlyTotal (YearAndMonth 2022 04) (-1300))
+        (MonthlyTotal (YearAndMonth 2022 04) 0)
+        `shouldBe` Right (MonthlyDebtSummary (YearAndMonth 2022 04) P2OwesP1 1300 650 1300 0)
+
     it "fails with `InternalError` when two summaries are from different months" $ do
       singleMonthSummary
         (MonthlyTotal (YearAndMonth 2022 04) (-1300))
         (MonthlyTotal (YearAndMonth 2022 07) (-1100))
+        `shouldSatisfy` is InternalError
+
+    it "fails with `InternalError` when two summaries have different signs" $ do
+      singleMonthSummary
+        (MonthlyTotal (YearAndMonth 2022 04) (-1300))
+        (MonthlyTotal (YearAndMonth 2022 04) 1100)
         `shouldSatisfy` is InternalError
 
   describe "normalizeTotals" $ do
