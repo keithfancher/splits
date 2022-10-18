@@ -1,6 +1,6 @@
 # Splits: An expense-splitting tool for no one
 
-A simple tool, build primarily as an excuse to learn Haskell.
+A simple tool, built primarily as an excuse to learn Haskell.
 
 ## What's it do?
 
@@ -64,7 +64,9 @@ few basic bits of info about the shape of your CSV data.)
   comma in it, say). We're simply splitting the string on the separator.
   (Perhaps use
   [parsec](https://www.stackage.org/lts-19.25/package/parsec-3.1.14.0) for
-  fancier parsing?)
+  fancier parsing? Or more likely,
+  [csv](https://www.stackage.org/lts-19.29/package/csv-0.1.2) or
+  [cassava](https://www.stackage.org/lts-19.29/package/cassava-0.5.3.0).)
 * Instead of the user specifying a date format, we could try to guess it based
   on the shape of the data alone. Could also allow arbitrary date strings
   instead of the limited set of valid date formats currently allowed. (Maybe
