@@ -1,6 +1,6 @@
 module ParseSpec (spec) where
 
-import Error (Error (..), ErrorType (..), is)
+import Error (ErrorType (..), is)
 import Expense (Date (..), Expense (..))
 import Parse
 import Test.Hspec
@@ -37,8 +37,10 @@ spec = do
       parseLine badDateConf simpleCsvLine `shouldSatisfy` is InvalidInput
 
 -- Our default date config:
+mdy :: DateParseConf
 mdy = DateParseConf MDY "/"
 
+simpleConf :: ParseConf
 simpleConf =
   ParseConf
     { colSep = ";",
@@ -48,6 +50,7 @@ simpleConf =
       dateConf = mdy
     }
 
+headerConf :: ParseConf
 headerConf =
   ParseConf
     { colSep = ";",
@@ -57,6 +60,7 @@ headerConf =
       dateConf = mdy
     }
 
+ymdConf :: ParseConf
 ymdConf =
   ParseConf
     { colSep = ";",
@@ -66,6 +70,7 @@ ymdConf =
       dateConf = DateParseConf YMD "-" -- different date format, "Y-M-D"
     }
 
+dmyConf :: ParseConf
 dmyConf =
   ParseConf
     { colSep = ";",
@@ -75,6 +80,7 @@ dmyConf =
       dateConf = DateParseConf DMY "." -- different date format, "D.M.Y"
     }
 
+badAmountConf :: ParseConf
 badAmountConf =
   ParseConf
     { colSep = ";",
@@ -84,6 +90,7 @@ badAmountConf =
       dateConf = mdy
     }
 
+outOfBoundsConf :: ParseConf
 outOfBoundsConf =
   ParseConf
     { colSep = ";",
@@ -93,6 +100,7 @@ outOfBoundsConf =
       dateConf = mdy
     }
 
+badDateConf :: ParseConf
 badDateConf =
   ParseConf
     { colSep = ";",
@@ -102,23 +110,30 @@ badDateConf =
       dateConf = mdy
     }
 
+simpleCsv :: CSV
 simpleCsv = "08/06/2022;BIG BURGERZ;-50.34\n08/31/2022;BIG BURGERZ;-93.21\n01/23/2023;STUFFZ;300"
 
 -- Same as above, but with a header row
+csvWithHeader :: CSV
 csvWithHeader = "DATE;DESCRIPTION;AMOUNT\n08/06/2022;BIG BURGERZ;-50.34\n08/31/2022;BIG BURGERZ;-93.21\n01/23/2023;STUFFZ;300"
 
+simpleResult :: [Expense]
 simpleResult =
   [ Expense (Date 2022 08 06) (-50.34),
     Expense (Date 2022 08 31) (-93.21),
     Expense (Date 2023 01 23) 300
   ]
 
+simpleCsvLine :: CSVLine
 simpleCsvLine = "08/06/2022;BIG BURGERZ;-50.34"
 
 -- Same data as above, but date in a diff format:
+simpleCsvLineYmdDate :: CSVLine
 simpleCsvLineYmdDate = "2022-08-06;BIG BURGERZ;-50.34"
 
 -- ...and one more time, a different date format:
+simpleCsvLineDmyDate :: CSVLine
 simpleCsvLineDmyDate = "6.8.2022;BIG BURGERZ;-50.34"
 
+simpleLineResult :: Expense
 simpleLineResult = Expense (Date 2022 08 06) (-50.34)

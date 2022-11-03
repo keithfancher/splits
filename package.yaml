@@ -28,6 +28,16 @@ default-extensions: # use this in favor of deprecated "extensions"
 - OverloadedStrings # raw strings and Data.Text play well together
 - StrictData # "lazy fields in data types can lead to unexpected space leaks"
 
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
 
 library:
   source-dirs: src

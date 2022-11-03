@@ -1,4 +1,4 @@
-module Main where
+module Main (main) where
 
 import Error (printError)
 import Options (CliOptions (..), cliOptParser)

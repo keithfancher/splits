@@ -76,12 +76,14 @@ spec = do
       normalizeTotals (YearAndMonth 2023 04) (YearAndMonth 2022 09) someTotals
         `shouldBe` expectedNormalizedTotals
 
+someTotals :: [MonthlyTotal]
 someTotals =
   [ MonthlyTotal (YearAndMonth 2022 11) 42,
     MonthlyTotal (YearAndMonth 2023 02) 666,
     MonthlyTotal (YearAndMonth 2023 03) 965.21
   ]
 
+otherTotals :: [MonthlyTotal]
 otherTotals =
   [ MonthlyTotal (YearAndMonth 2022 11) 50,
     MonthlyTotal (YearAndMonth 2023 02) 700,
@@ -90,6 +92,7 @@ otherTotals =
   ]
 
 -- someTotals + otherTotals:
+expectedSummaries :: [MonthlyDebtSummary]
 expectedSummaries =
   [ MonthlyDebtSummary (YearAndMonth 2022 11) P1OwesP2 92 4 42 50,
     MonthlyDebtSummary (YearAndMonth 2022 12) ExpensesEqual 0 0 0 0,
@@ -101,6 +104,7 @@ expectedSummaries =
   ]
 
 -- someTotals + []
+oneSidedSummaries :: [MonthlyDebtSummary]
 oneSidedSummaries =
   [ MonthlyDebtSummary (YearAndMonth 2022 11) P2OwesP1 42 21 42 0,
     MonthlyDebtSummary (YearAndMonth 2022 12) ExpensesEqual 0 0 0 0,
@@ -109,6 +113,7 @@ oneSidedSummaries =
     MonthlyDebtSummary (YearAndMonth 2023 03) P2OwesP1 965.21 482.605 965.21 0
   ]
 
+expectedNormalizedTotals :: [MonthlyTotal]
 expectedNormalizedTotals =
   [ MonthlyTotal (YearAndMonth 2022 09) 0,
     MonthlyTotal (YearAndMonth 2022 10) 0,
@@ -120,6 +125,7 @@ expectedNormalizedTotals =
     MonthlyTotal (YearAndMonth 2023 04) 0
   ]
 
+expectedEmptyTotals :: [MonthlyTotal]
 expectedEmptyTotals =
   [ MonthlyTotal (YearAndMonth 2022 09) 0,
     MonthlyTotal (YearAndMonth 2022 10) 0,

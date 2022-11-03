@@ -1,7 +1,7 @@
 module ProcessSpec (spec) where
 
 import Expense (YearAndMonth (..))
-import Parse (DateFormat (..), DateParseConf (..), ParseConf (..))
+import Parse (CSV, DateFormat (..), DateParseConf (..), ParseConf (..))
 import Process
 import Summary (DebtOutcome (..), MonthlyDebtSummary (..))
 import Test.Hspec
@@ -19,8 +19,10 @@ spec = do
       process testConf "" "" `shouldBe` Right []
 
 -- Our default date config:
+mdy :: DateParseConf
 mdy = DateParseConf MDY "/"
 
+testConf :: ParseConf
 testConf =
   ParseConf
     { colSep = ";",
@@ -30,10 +32,13 @@ testConf =
       dateConf = mdy
     }
 
+simpleCsv1 :: CSV
 simpleCsv1 = "08/06/2022;BIG BURGERZ;-50\n08/31/2022;BIG BURGERZ;-93\n01/23/2023;STUFFZ;300"
 
+simpleCsv2 :: CSV
 simpleCsv2 = "08/28/2022;BIG BURGERZ;-100\n09/12/2022;BIG BURGERZ;-666\n01/15/2023;STUFFZ;9000"
 
+expectedSummaries :: [MonthlyDebtSummary]
 expectedSummaries =
   [ MonthlyDebtSummary (YearAndMonth 2022 08) P2OwesP1 243 21.5 143 100,
     MonthlyDebtSummary (YearAndMonth 2022 09) P1OwesP2 666 333 0 666,
@@ -43,6 +48,7 @@ expectedSummaries =
     MonthlyDebtSummary (YearAndMonth 2023 01) P1OwesP2 9300 4350 300 9000
   ]
 
+bigConf :: ParseConf
 bigConf =
   ParseConf
     { colSep = ",",
@@ -54,6 +60,7 @@ bigConf =
 
 -- These two sets of data are taken from a real CSV export from the Chase site,
 -- with a bit of anonymizing of course
+bigCsvData1 :: CSV
 bigCsvData1 =
   "Transaction Date,Post Date,Description,Category,Type,Amount,Memo\n\
   \11/28/2021,11/28/2021,BILL'S FOOD BARN,Food & Drink,Sale,-57.15,\n\
@@ -93,6 +100,7 @@ bigCsvData1 =
   \01/02/2022,01/02/2022,BILL'S FOOD BARN,Food & Drink,Sale,-56.48,\n\
   \01/01/2022,01/02/2022,BILL'S FOOD BARN,Food & Drink,Sale,-242.25,\n"
 
+bigCsvData2 :: CSV
 bigCsvData2 =
   "Transaction Date,Post Date,Description,Category,Type,Amount,Memo\n\
   \01/31/2022,01/31/2022,BILL'S FOOD BARN,Food & Drink,Sale,-75.88,\n\
@@ -120,6 +128,7 @@ bigCsvData2 =
   \11/08/2021,11/08/2021,BILL'S FOOD BARN,Food & Drink,Sale,-9.99,\n\
   \11/07/2021,11/08/2021,BILL'S FOOD BARN,Food & Drink,Sale,-65.15,\n"
 
+bigSummaries :: [MonthlyDebtSummary]
 bigSummaries =
   [ MonthlyDebtSummary (YearAndMonth 2021 10) P2OwesP1 90.23 45.115 90.23 0,
     MonthlyDebtSummary (YearAndMonth 2021 11) P1OwesP2 1168.29 7.264999999999986 576.88 591.41,

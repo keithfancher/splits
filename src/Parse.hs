@@ -2,6 +2,7 @@ module Parse
   ( parse,
     parseLine,
     CSV,
+    CSVLine,
     DateFormat (..),
     DateParseConf (..),
     ParseConf (..),
