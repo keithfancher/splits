@@ -25,12 +25,13 @@ this tool could probably be replaced with some Excel formulas or something.)
 
 ## Build requirements
 
-I think `stack` is the only hard requirement:
+I think
+[`stack`](https://docs.haskellstack.org/en/stable/#how-to-install-stack) is
+the only hard requirement. (Which can alternatively be installed with
+[GHCup](https://www.haskell.org/ghcup/) -- whatever floats your boat.)
 
-https://docs.haskellstack.org/en/stable/#how-to-install-stack
-
-That'll install the correct version of GHC and the required project
-dependencies for you.
+Once you've got `stack` installed, it'll take care of the rest -- GHC versions
+and project dependencies and so on.
 
 ## How to build
 
@@ -39,7 +40,7 @@ for some other useful stuff (cleaning, running, testing, etc.).
 
 You can use `stack install` to install on your system -- it simply copies the
 binary to the default Stack binary-place. (You may still need to add that to
-your `PATH`.)
+your `PATH`. It's `~/.local/bin` on my machine.)
 
 ## Running it
 
@@ -53,20 +54,20 @@ Try `make example` to do a sample run with some test data. It should give you
 the general idea, especially re: the available CLI options. (`splits` needs a
 few basic bits of info about the shape of your CSV data.)
 
+If you've installed via `stack install` (and the stack install directory is in
+your path), you can just use it like any other binary:
+
+```
+$ splits -h
+$ splits -d 0 -a 5 -r 1 mydata.csv yourdata.csv
+```
+
 ## TODOs / Limitations
 
 * Could use an option to output in CSV format as well -- probably more
   convenient for record keeping.
 * There is currently no way to provide different parsing options for each of
   the two CSV input files -- they are assumed to be in the same format.
-* CSV parsing is pretty rudimentary. For example, there's currently no way to
-  escape data that includes the CSV separator character in it (data with a
-  comma in it, say). We're simply splitting the string on the separator.
-  (Perhaps use
-  [parsec](https://www.stackage.org/lts-19.25/package/parsec-3.1.14.0) for
-  fancier parsing? Or more likely,
-  [csv](https://www.stackage.org/lts-19.29/package/csv-0.1.2) or
-  [cassava](https://www.stackage.org/lts-19.29/package/cassava-0.5.3.0).)
 * Instead of the user specifying a date format, we could try to guess it based
   on the shape of the data alone. Could also allow arbitrary date strings
   instead of the limited set of valid date formats currently allowed. (Maybe
@@ -74,4 +75,4 @@ few basic bits of info about the shape of your CSV data.)
   [fuzzy-dates](https://www.stackage.org/lts-19.25/package/fuzzy-dates-0.1.1.2)
   or
   [Data.Dates](https://hackage.haskell.org/package/dates-0.2.3.2/docs/Data-Dates.html)?)
-* Probably don't use this :')
+* You probably shouldn't use this :')
