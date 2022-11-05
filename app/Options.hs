@@ -62,7 +62,7 @@ dateConfParser =
       )
     <*> strOption
       ( long "datesep"
-          <> short 'x'
+          <> short 's'
           <> metavar "SEPARATOR"
           <> help "Character used to separate fields in date (e.g. '/' or '-')"
           <> showDefault
