@@ -30,8 +30,6 @@ configParser =
       ( long "datecol"
           <> short 'd'
           <> help "Zero-indexed column number of date field"
-          -- <> showDefault
-          -- <> value 0
           <> metavar "INT"
       )
     <*> option
@@ -39,8 +37,6 @@ configParser =
       ( long "amountcol"
           <> short 'a'
           <> help "Zero-indexed column number of amount field"
-          -- <> showDefault
-          -- <> value 1
           <> metavar "INT"
       )
     <*> option
@@ -48,8 +44,6 @@ configParser =
       ( long "startrow"
           <> short 'r'
           <> help "Zero-indexed row number where the data starts (excluding header)"
-          -- <> showDefault
-          -- <> value 0
           <> metavar "INT"
       )
     <*> dateConfParser
