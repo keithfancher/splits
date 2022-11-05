@@ -43,7 +43,7 @@ mdy = DateParseConf MDY "/"
 simpleConf :: ParseConf
 simpleConf =
   ParseConf
-    { colSep = ";",
+    { colSep = ",",
       dateColNum = 0,
       amountColNum = 2,
       dataStartRow = 0, -- data starts immediately
@@ -53,7 +53,7 @@ simpleConf =
 headerConf :: ParseConf
 headerConf =
   ParseConf
-    { colSep = ";",
+    { colSep = ",",
       dateColNum = 0,
       amountColNum = 2,
       dataStartRow = 1, -- there's a header with col names before the data
@@ -63,7 +63,7 @@ headerConf =
 ymdConf :: ParseConf
 ymdConf =
   ParseConf
-    { colSep = ";",
+    { colSep = ",",
       dateColNum = 0,
       amountColNum = 2,
       dataStartRow = 0,
@@ -73,7 +73,7 @@ ymdConf =
 dmyConf :: ParseConf
 dmyConf =
   ParseConf
-    { colSep = ";",
+    { colSep = ",",
       dateColNum = 0,
       amountColNum = 2,
       dataStartRow = 0,
@@ -83,7 +83,7 @@ dmyConf =
 badAmountConf :: ParseConf
 badAmountConf =
   ParseConf
-    { colSep = ";",
+    { colSep = ",",
       dateColNum = 0,
       amountColNum = 1, -- this ain't right! 1 is the description
       dataStartRow = 0,
@@ -93,7 +93,7 @@ badAmountConf =
 outOfBoundsConf :: ParseConf
 outOfBoundsConf =
   ParseConf
-    { colSep = ";",
+    { colSep = ",",
       dateColNum = 0,
       amountColNum = 20, -- out of bounds!
       dataStartRow = 0,
@@ -103,19 +103,19 @@ outOfBoundsConf =
 badDateConf :: ParseConf
 badDateConf =
   ParseConf
-    { colSep = ";",
+    { colSep = ",",
       dateColNum = 1, -- this is the index for description, not date!
       amountColNum = 2,
       dataStartRow = 0,
       dateConf = mdy
     }
 
-simpleCsv :: CSV
-simpleCsv = "08/06/2022;BIG BURGERZ;-50.34\n08/31/2022;BIG BURGERZ;-93.21\n01/23/2023;STUFFZ;300"
+simpleCsv :: CSVRaw
+simpleCsv = "08/06/2022,BIG BURGERZ,-50.34\n08/31/2022,BIG BURGERZ,-93.21\n01/23/2023,STUFFZ,300"
 
 -- Same as above, but with a header row
-csvWithHeader :: CSV
-csvWithHeader = "DATE;DESCRIPTION;AMOUNT\n08/06/2022;BIG BURGERZ;-50.34\n08/31/2022;BIG BURGERZ;-93.21\n01/23/2023;STUFFZ;300"
+csvWithHeader :: CSVRaw
+csvWithHeader = "DATE,DESCRIPTION,AMOUNT\n08/06/2022,BIG BURGERZ,-50.34\n08/31/2022,BIG BURGERZ,-93.21\n01/23/2023,STUFFZ,300"
 
 simpleResult :: [Expense]
 simpleResult =
@@ -125,15 +125,15 @@ simpleResult =
   ]
 
 simpleCsvLine :: CSVLine
-simpleCsvLine = "08/06/2022;BIG BURGERZ;-50.34"
+simpleCsvLine = ["08/06/2022", "BIG BURGERZ", "-50.34"]
 
 -- Same data as above, but date in a diff format:
 simpleCsvLineYmdDate :: CSVLine
-simpleCsvLineYmdDate = "2022-08-06;BIG BURGERZ;-50.34"
+simpleCsvLineYmdDate = ["2022-08-06", "BIG BURGERZ", "-50.34"]
 
 -- ...and one more time, a different date format:
 simpleCsvLineDmyDate :: CSVLine
-simpleCsvLineDmyDate = "6.8.2022;BIG BURGERZ;-50.34"
+simpleCsvLineDmyDate = ["6.8.2022", "BIG BURGERZ", "-50.34"]
 
 simpleLineResult :: Expense
 simpleLineResult = Expense (Date 2022 08 06) (-50.34)

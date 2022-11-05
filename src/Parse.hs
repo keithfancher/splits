@@ -3,6 +3,7 @@ module Parse
     parseLine,
     CSV,
     CSVLine,
+    CSVRaw,
     DateFormat (..),
     DateParseConf (..),
     ParseConf (..),
@@ -12,6 +13,7 @@ where
 import qualified Data.Text as T
 import Error (Error (..), ErrorType (..), mkError)
 import Expense (Date (..), Expense (..))
+import qualified Text.CSV as C
 import Text.Read (readMaybe)
 
 data ParseConf = ParseConf
@@ -48,25 +50,49 @@ data DateFormat
   | DMY -- d/m/y, aka Euro-style (e.g. 31-10-2022)
   deriving (Eq, Show, Read)
 
-type CSV = T.Text -- Full Text of a CSV
+-- Unparsed, just the raw text
+type CSVRaw = T.Text
 
-type CSVLine = T.Text -- A single line from a CSV
+-- Parsed, a collection of rows/lines/records/whatever
+type CSV = [CSVLine]
+
+-- A line is just a collection of fields
+type CSVLine = [CSVField]
+
+-- ...which is itself just text
+type CSVField = T.Text
 
 -- Given a CSV (as Text), parse it out into a list of `Expense` objects. We'll
 -- need some config data to know exactly how to parse out the data we need.
-parse :: ParseConf -> CSV -> Either Error [Expense]
-parse conf expensesCsv = mapM parseWithConf linesWithoutHeader
+parse :: ParseConf -> CSVRaw -> Either Error [Expense]
+parse _ "" = Right [] -- this is fine
+parse conf expensesCsv = do
+  -- Note call to `strip` -- the `csv` library doesn't like newlines at the end
+  -- of an input file, and it generates an extra (invalid) line which then
+  -- fails to parse. (The RFC says it's fine tho'!) Anyway, a workaround:
+  let csvString = T.unpack $ T.strip expensesCsv
+  parseResults <- mapCsvResults $ C.parseCSV "" csvString
+  let linesWithoutHeader = dropHeader parseResults
+  mapM parseWithConf linesWithoutHeader
   where
     parseWithConf = parseLine conf -- partial application magic!
-    linesWithoutHeader = drop (dataStartRow conf) (T.lines expensesCsv)
+    dropHeader = drop (dataStartRow conf) -- note that this is valid even if there is no header
+
+-- Map the `csv` library's types into our own.
+mapCsvResults :: Show a => Either a C.CSV -> Either Error CSV
+mapCsvResults (Left e) = Left $ mkError ParseError $ T.pack $ show e
+mapCsvResults (Right r) = Right $ mapCsv r
+  where
+    mapCsv = map mapRecord
+    mapRecord = map mapField
+    mapField = T.pack
 
 --  One row from the CSV. Parse out a single `Expense` object.
 parseLine :: ParseConf -> CSVLine -> Either Error Expense
-parseLine conf csvLine = Expense <$> expDate <*> expAmount
+parseLine conf csvFields = Expense <$> expDate <*> expAmount
   where
-    splitText = T.splitOn (colSep conf) csvLine
-    expDate = (splitText `nth` dateColNum conf) >>= parseDate (dateConf conf)
-    amountText = splitText `nth` amountColNum conf
+    expDate = (csvFields `nth` dateColNum conf) >>= parseDate (dateConf conf)
+    amountText = csvFields `nth` amountColNum conf
     expAmount = amountText >>= readDouble
 
 -- Attempt to parse out a single `Date`, given some config data and Text.

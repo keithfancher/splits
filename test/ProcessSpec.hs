@@ -1,7 +1,7 @@
 module ProcessSpec (spec) where
 
 import Expense (YearAndMonth (..))
-import Parse (CSV, DateFormat (..), DateParseConf (..), ParseConf (..))
+import Parse (CSVRaw, DateFormat (..), DateParseConf (..), ParseConf (..))
 import Process
 import Summary (DebtOutcome (..), MonthlyDebtSummary (..))
 import Test.Hspec
@@ -25,18 +25,18 @@ mdy = DateParseConf MDY "/"
 testConf :: ParseConf
 testConf =
   ParseConf
-    { colSep = ";",
+    { colSep = ",",
       dateColNum = 0,
       amountColNum = 2,
       dataStartRow = 0,
       dateConf = mdy
     }
 
-simpleCsv1 :: CSV
-simpleCsv1 = "08/06/2022;BIG BURGERZ;-50\n08/31/2022;BIG BURGERZ;-93\n01/23/2023;STUFFZ;300"
+simpleCsv1 :: CSVRaw
+simpleCsv1 = "08/06/2022,BIG BURGERZ,-50\n08/31/2022,BIG BURGERZ,-93\n01/23/2023,STUFFZ,300"
 
-simpleCsv2 :: CSV
-simpleCsv2 = "08/28/2022;BIG BURGERZ;-100\n09/12/2022;BIG BURGERZ;-666\n01/15/2023;STUFFZ;9000"
+simpleCsv2 :: CSVRaw
+simpleCsv2 = "08/28/2022,BIG BURGERZ,-100\n09/12/2022,BIG BURGERZ,-666\n01/15/2023,STUFFZ,9000"
 
 expectedSummaries :: [MonthlyDebtSummary]
 expectedSummaries =
@@ -60,7 +60,7 @@ bigConf =
 
 -- These two sets of data are taken from a real CSV export from the Chase site,
 -- with a bit of anonymizing of course
-bigCsvData1 :: CSV
+bigCsvData1 :: CSVRaw
 bigCsvData1 =
   "Transaction Date,Post Date,Description,Category,Type,Amount,Memo\n\
   \11/28/2021,11/28/2021,BILL'S FOOD BARN,Food & Drink,Sale,-57.15,\n\
@@ -100,7 +100,7 @@ bigCsvData1 =
   \01/02/2022,01/02/2022,BILL'S FOOD BARN,Food & Drink,Sale,-56.48,\n\
   \01/01/2022,01/02/2022,BILL'S FOOD BARN,Food & Drink,Sale,-242.25,\n"
 
-bigCsvData2 :: CSV
+bigCsvData2 :: CSVRaw
 bigCsvData2 =
   "Transaction Date,Post Date,Description,Category,Type,Amount,Memo\n\
   \01/31/2022,01/31/2022,BILL'S FOOD BARN,Food & Drink,Sale,-75.88,\n\

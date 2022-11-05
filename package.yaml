@@ -42,6 +42,7 @@ library:
   dependencies:
   - containers
   - text
+  - csv
 
 executables:
   splits:
