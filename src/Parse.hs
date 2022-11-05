@@ -17,9 +17,7 @@ import qualified Text.CSV as C
 import Text.Read (readMaybe)
 
 data ParseConf = ParseConf
-  { -- Character(s) that separate the columns in the CSV:
-    colSep :: T.Text,
-    -- Zero-indexed column number of the date of expense
+  { -- Zero-indexed column number of the date of expense
     dateColNum :: Int,
     -- Zero-indexed column number of the amount of expense
     amountColNum :: Int,

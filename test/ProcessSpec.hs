@@ -25,8 +25,7 @@ mdy = DateParseConf MDY "/"
 testConf :: ParseConf
 testConf =
   ParseConf
-    { colSep = ",",
-      dateColNum = 0,
+    { dateColNum = 0,
       amountColNum = 2,
       dataStartRow = 0,
       dateConf = mdy
@@ -51,8 +50,7 @@ expectedSummaries =
 bigConf :: ParseConf
 bigConf =
   ParseConf
-    { colSep = ",",
-      dateColNum = 0,
+    { dateColNum = 0,
       amountColNum = 5,
       dataStartRow = 1,
       dateConf = mdy

@@ -25,15 +25,7 @@ cliOptionsParser =
 configParser :: Parser ParseConf
 configParser =
   ParseConf
-    <$> strOption
-      ( long "sep"
-          <> short 's'
-          <> metavar "SEPARATOR"
-          <> help "Character used to separate CSV fields"
-          <> showDefault
-          <> value ","
-      )
-    <*> option
+    <$> option
       auto
       ( long "datecol"
           <> short 'd'

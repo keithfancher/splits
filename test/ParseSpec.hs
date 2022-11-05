@@ -46,8 +46,7 @@ mdy = DateParseConf MDY "/"
 simpleConf :: ParseConf
 simpleConf =
   ParseConf
-    { colSep = ",",
-      dateColNum = 0,
+    { dateColNum = 0,
       amountColNum = 2,
       dataStartRow = 0, -- data starts immediately
       dateConf = mdy
@@ -56,8 +55,7 @@ simpleConf =
 headerConf :: ParseConf
 headerConf =
   ParseConf
-    { colSep = ",",
-      dateColNum = 0,
+    { dateColNum = 0,
       amountColNum = 2,
       dataStartRow = 1, -- there's a header with col names before the data
       dateConf = mdy
@@ -66,8 +64,7 @@ headerConf =
 quotedConf :: ParseConf
 quotedConf =
   ParseConf
-    { colSep = ",",
-      dateColNum = 0,
+    { dateColNum = 0,
       amountColNum = 2,
       dataStartRow = 0, -- data starts immediately
       dateConf = DateParseConf MDY "," -- commas to separate date fields? weird!
@@ -76,8 +73,7 @@ quotedConf =
 ymdConf :: ParseConf
 ymdConf =
   ParseConf
-    { colSep = ",",
-      dateColNum = 0,
+    { dateColNum = 0,
       amountColNum = 2,
       dataStartRow = 0,
       dateConf = DateParseConf YMD "-" -- different date format, "Y-M-D"
@@ -86,8 +82,7 @@ ymdConf =
 dmyConf :: ParseConf
 dmyConf =
   ParseConf
-    { colSep = ",",
-      dateColNum = 0,
+    { dateColNum = 0,
       amountColNum = 2,
       dataStartRow = 0,
       dateConf = DateParseConf DMY "." -- different date format, "D.M.Y"
@@ -96,8 +91,7 @@ dmyConf =
 badAmountConf :: ParseConf
 badAmountConf =
   ParseConf
-    { colSep = ",",
-      dateColNum = 0,
+    { dateColNum = 0,
       amountColNum = 1, -- this ain't right! 1 is the description
       dataStartRow = 0,
       dateConf = mdy
@@ -106,8 +100,7 @@ badAmountConf =
 outOfBoundsConf :: ParseConf
 outOfBoundsConf =
   ParseConf
-    { colSep = ",",
-      dateColNum = 0,
+    { dateColNum = 0,
       amountColNum = 20, -- out of bounds!
       dataStartRow = 0,
       dateConf = mdy
@@ -116,8 +109,7 @@ outOfBoundsConf =
 badDateConf :: ParseConf
 badDateConf =
   ParseConf
-    { colSep = ",",
-      dateColNum = 1, -- this is the index for description, not date!
+    { dateColNum = 1, -- this is the index for description, not date!
       amountColNum = 2,
       dataStartRow = 0,
       dateConf = mdy
