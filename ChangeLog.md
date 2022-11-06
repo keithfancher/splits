@@ -8,4 +8,8 @@ and this project adheres to the
 
 ## Unreleased
 
-## 0.1.0.0 - YYYY-MM-DD
+## 0.1.0 - 2022-11-05
+
+### Added
+
+- Everything! Now it exists. And it does its thing, for what that's worth.
